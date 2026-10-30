@@ -1,0 +1,5 @@
+{
+  "mcpServers": {
+    "sofatofu": { "type": "http", "url": "https://sofatofu.com/mcp" }
+  }
+}
