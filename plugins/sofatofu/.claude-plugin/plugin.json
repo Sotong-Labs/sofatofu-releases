@@ -1,6 +1,6 @@
 {
   "name": "sofatofu",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "displayName": "sofatofu",
   "description": "Let your agent keep your CRM up to date. Ask it to find contacts, log calls, and update deals in sofatofu. See what changed and why, and undo most changes.",
   "author": {

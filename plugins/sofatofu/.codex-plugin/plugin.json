@@ -1,6 +1,6 @@
 {
   "name": "sofatofu",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Let your agent keep your CRM up to date. Ask it to find contacts, log calls, and update deals in sofatofu. See what changed and why, and undo most changes.",
   "author": {
     "name": "Sam Kah Man",
@@ -83,7 +83,7 @@
         }
       },
       "publication": {
-        "release_notes": "Let your agent handle the CRM updates.\n\n### 🔌 Connect your agent\n\nUse sofatofu from Claude, ChatGPT, and compatible MCP apps. Ask your agent to find a contact, log a call, or update a deal. Add `https://sofatofu.com/mcp`, sign in, and choose a workspace to connect.\n\nThe sofatofu plugin for Claude Code and Codex includes the connector and the skill that guides your agent through CRM work.\n\n### 🧭 Your connections, in one place\n\n- See which app made a change on its page in the Ledger.\n- Review your connected apps and their workspaces in [account settings](https://sofatofu.com/portal/account). Revoke a connection you no longer need.\n- Turn off command and connection usage data in account settings. Your choice applies to the CLI and every connected app.\n\n### 🔧 Everyday improvements\n\n- Copy the setup prompt from the portal to your agent. It guides the agent to reuse a working connection or help you set one up.\n- CLI help explains whether a CRM command reads, adds, or changes data, and whether it sends data to someone else.\n- CLI sign-out reports when it cannot end a connection and keeps the credentials so you can retry. To sign out locally despite a failure, use `sofatofu auth logout --force` and follow the instructions to revoke the connection in account settings.\n- The new [support page](https://sofatofu.com/support) tells you how to get help with setup, your account, or a bug.\n\n### ⚠️ Before you upgrade\n\n- Update the CLI, then run `sofatofu auth login`. Approve the code and choose a workspace in your browser.\n- Each connection works in one workspace. The CLI no longer supports `workspace list`, `workspace use`, or `--workspace`. To switch workspace, sign out and connect again.\n- API requests use OAuth access tokens and `POST /api/<noun>/<verb>`, such as `/api/record/search`. The connection sets the workspace. API URLs that include a workspace and session tokens no longer work.\n- An owner-only refusal returns `403 forbidden` and CLI exit code `1`. A missing or expired connection returns `401 not_signed_in` and exit code `3`. Update scripts that check these errors.\n- Browser sign-in requires JavaScript."
+        "release_notes": "### 🔧 Everyday improvements\n\n- CLI help and MCP tool descriptions are clearer."
       }
     }
   }
