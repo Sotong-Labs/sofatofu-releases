@@ -46,7 +46,7 @@ When you put several operators on one field, all of them must match. For example
 
 To find an unset value, use `null` with `equals`. For example, `{"owner":null}` finds deals without an owner. The `in` and `not_in` lists can't contain `null`. Unset values never match `gte` or `lte`.
 
-Text matching ignores case and extra whitespace, while IDs have to match exactly. Domain and email filters require valid domains or email addresses, not arbitrary text; use the same formats as [record writes](records.md#fields-and-matching). A domain filter compares domains the same way as [record writes](records.md#edge-cases-and-formatting-details), so `acme.example.com` also finds `www.acme.example.com`. Stage filters take stage names, archived stages included. An unknown stage name returns `invalid_input` along with the stage names.
+Text matching ignores case and extra whitespace. Name matching also ignores punctuation. IDs have to match exactly. Domain and email filters require valid domains or email addresses, not arbitrary text; use the same formats as [record writes](records.md#fields-and-matching). A domain filter compares domains the same way as [record writes](records.md#edge-cases-and-formatting-details), so `acme.example.com` also finds `www.acme.example.com`. Stage filters take stage names, archived stages included. An unknown stage name returns `invalid_input` along with the stage names.
 
 ## Any of several filters
 

@@ -8,7 +8,7 @@ A workspace defines three things: the currency for deal values, the deal stages,
 workspace get {}
 ```
 
-`workspace get` returns the workspace `name`, your `role`, and every stage and field in the `stages` and `fields` arrays. It includes `currency` when one is set. The arrays are always complete, because this operation has no list limits.
+`workspace get` returns the workspace `name`, your `role`, the deal `currency`, and every stage and field in the `stages` and `fields` arrays. `currency` is `null` until an owner sets one. The arrays are always complete, because this operation has no list limits.
 
 Each stage item has `id`, `name`, `position` and `archived`. Each field item has `id`, `record_type`, `name`, `type`, `currency`, `options` and `archived`. Items also carry their creation and update times, and a `change_id` while that change is still in history.
 

@@ -109,7 +109,7 @@ If you don't know whether a create worked, search again before retrying. If you 
 
 ## Fields and matching
 
-A strict key can belong to at most one record in a workspace. A deleted record keeps its key until permanent removal after 30 days. A record without a value for its strict-key field has no strict key. A loose match is another active record of the same type with equal values in every loose-match field. Names compare without case and extra spaces. An empty loose-match field prevents a loose match, but a missing `person`, `company` or `deal` of an activity matches the same missing field. A deleted record never counts. A create, or an update that changes a loose-match field, gets `possible_duplicate` unless `force` is `true`. A change of only case or spaces does not count. `force` never skips a strict key. Other fields can repeat.
+A strict key can belong to at most one record in a workspace. A deleted record keeps its key until permanent removal after 30 days. A record without a value for its strict-key field has no strict key. A loose match is another active record of the same type with equal values in every loose-match field. Names compare without case, extra spaces, and punctuation. An empty loose-match field prevents a loose match, but a missing `person`, `company` or `deal` of an activity matches the same missing field. A deleted record never counts. A create, or an update that changes a loose-match field, gets `possible_duplicate` unless `force` is `true`. A change of only case, spaces, or punctuation does not count. `force` never skips a strict key. Other fields can repeat.
 
 | Type | Required on create | Also accepts | Strict key | Loose match |
 | --- | --- | --- | --- | --- |

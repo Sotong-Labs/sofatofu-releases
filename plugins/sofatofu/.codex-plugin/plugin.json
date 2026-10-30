@@ -1,13 +1,21 @@
 {
   "name": "sofatofu",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Let your agent keep your CRM up to date. Ask it to find contacts, log calls, and update deals in sofatofu. See what changed and why, and undo most changes.",
   "author": {
     "name": "Sam Kah Man",
     "email": "help@sofatofu.com"
   },
   "homepage": "https://sofatofu.com/skills/sofatofu/SKILL",
+  "repository": "https://github.com/Sotong-Labs/sofatofu-releases",
   "license": "MIT",
+  "keywords": [
+    "crm",
+    "sales",
+    "contacts",
+    "deals",
+    "pipeline"
+  ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
@@ -83,7 +91,7 @@
         }
       },
       "publication": {
-        "release_notes": "### 🔧 Everyday improvements\n\n- CLI help and MCP tool descriptions are clearer."
+        "release_notes": "### 🔧 Everyday improvements\n\n- Name matching ignores punctuation, so \"Acme, Inc.\" and \"Acme Inc\" count as the same name in searches and duplicate checks.\n- `workspace get` always returns `currency`. It is `null` until an owner sets one.\n- Tool descriptions explain that a read_id works for one write, and that custom field keys are field names."
       }
     }
   }

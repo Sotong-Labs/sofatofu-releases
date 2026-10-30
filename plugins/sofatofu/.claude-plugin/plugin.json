@@ -1,6 +1,6 @@
 {
   "name": "sofatofu",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "displayName": "sofatofu",
   "description": "Let your agent keep your CRM up to date. Ask it to find contacts, log calls, and update deals in sofatofu. See what changed and why, and undo most changes.",
   "author": {
@@ -8,7 +8,15 @@
     "email": "help@sofatofu.com"
   },
   "homepage": "https://sofatofu.com",
+  "repository": "https://github.com/Sotong-Labs/sofatofu-releases",
   "license": "MIT",
+  "keywords": [
+    "crm",
+    "sales",
+    "contacts",
+    "deals",
+    "pipeline"
+  ],
   "icon": "./assets/logo.png",
   "documentationUrl": "https://sofatofu.com/skills/sofatofu/SKILL",
   "supportUrl": "https://sofatofu.com/support",
