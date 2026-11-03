@@ -1,6 +1,6 @@
 {
   "name": "sofatofu",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "Let your agent keep your CRM up to date. Ask it to find contacts, log calls, and update deals in sofatofu. See what changed and why, and undo most changes.",
   "author": {
     "name": "Sam Kah Man",
@@ -91,7 +91,7 @@
         }
       },
       "publication": {
-        "release_notes": "### 🔧 Everyday improvements\n\n- Name matching ignores punctuation, so \"Acme, Inc.\" and \"Acme Inc\" count as the same name in searches and duplicate checks.\n- `workspace get` always returns `currency`. It is `null` until an owner sets one.\n- Tool descriptions explain that a read_id works for one write, and that custom field keys are field names."
+        "release_notes": "### 📖 Help with setup\n\nThe new [installation guide](https://sofatofu.com/docs/installation) covers connecting your agent, installing the CLI, and reusing an existing connection. Find it through the Docs link in the site navigation, or use the search on any docs page.\n\nThe setup prompt takes your agent to the guide. It also explains what setup data the CLI sends and how to opt out with `SOFATOFU_NO_TELEMETRY=1`.\n\n### 🔧 Everyday improvements\n\n- Record creation tools and CLI help list the required fields for each record type, including the company that every deal needs.\n- Missing-field errors tell your agent exactly what to add, such as `records.0.company: is required.`\n- Write errors use tool names such as `record_search` and `record_get` to explain which read to run before trying again.\n- The agent skill gives clearer guidance for reports: use exact figures from retrieved data, and explain which results cannot be verified and why.\n\n### ⚠️ Before you upgrade\n\n- A write can reject a `read_id` from before the server upgrade with `read_scope`. Repeat the read and check the result before retrying with the new `read_id`.\n- If your scripts inspect `read_scope` errors, use `name` instead of `kind`. The `name` and `accepted` fields use tool names such as `record_search` instead of internal names such as `record.search`.\n- Missing required fields and attempts to clear a deal's company fail input validation. These errors identify the field in the message instead of returning a record `index` or `id`."
       }
     }
   }
