@@ -132,6 +132,5 @@ Every type also accepts `fields`, a JSON object whose keys are active field name
 - **Length limits.** A `name`, `stage`, `subject` or custom text value holds 1 to 255 characters. A `body` holds 1 to 4000. Emoji are fine.
 - **Hidden characters.** Text with a hidden or direction-control character, such as U+200B or U+202E, returns `invalid_input`. So does NUL (U+0000) or half of a character pair anywhere in a request. The error names the field and any hidden character.
 - **Email case.** Reads return an email in lowercase.
-- **Domains in other alphabets.** Reads return these in their ASCII form, so `пример.рф` comes back as `xn--e1afmkfd.xn--p1ai`. A search finds the domain by either form. A domain label (a part between dots) that mixes Latin letters with letters from another alphabet is rejected. This also applies to the domain part of an email.
 - **Leading `www.`.** Reads return a domain with its leading `www.`. Sofatofu ignores one leading `www.` only to compare domains, and only when two or more labels remain, so `www.com` matches only `www.com`.
 - **Activity kind.** Case and surrounding whitespace don't matter. Reads return the kind in lowercase.

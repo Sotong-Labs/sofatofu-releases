@@ -17,7 +17,7 @@ When the check returns the user and the workspace, make sure they are the ones t
 
 If the check tells you to sign in, connect with what you have, then check again. A new connection needs the user to sign in, approve access and choose the workspace in the browser. If the task names a workspace, tell the user which one to choose.
 
-- **Connector:** if the app lists the official Sofatofu connector in its connector directory or connection controls, offer it there. If not, ask the user to add a custom connector with the URL `https://sofatofu.com/mcp`. In Claude, [this link](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Sofatofu&connectorUrl=https%3A%2F%2Fsofatofu.com%2Fmcp) fills in the name and the URL, and the user confirms.
+- **Connector:** if the app lists the official Sofatofu connector in its connector directory or connection controls, offer it there. If not, ask the user to add a custom connector with the URL `https://sofatofu.com/mcp`. In Claude, offer the [official Sofatofu connector](https://claude.ai/directory/sofatofu).
 - **CLI:** run `sofatofu auth login`. Until the user approves access, it returns a link (`verification_uri_complete`) and a code (`user_code`). Give them to the user once, then run the same command again to check. If you get the same link again, approval is still pending, so do not ask the user again. You are signed in when the command returns the user and the workspace.
 
 ## Switch workspace

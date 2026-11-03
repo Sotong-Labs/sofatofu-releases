@@ -41,12 +41,23 @@ record search {"type":"deal","filter":{"last_activity":{"older_than_days":30},"s
 | `not_in` | A non-empty list | The field equals none of the listed values. Unset fields also match. |
 | `gte` | A number, date or date-time | The field is greater than or equal to this value. |
 | `lte` | A number, date or date-time | The field is less than or equal to this value. |
+| `contains` | One text value | The field holds this text. |
 
 When you put several operators on one field, all of them must match. For example, `{"value":{"gte":1000,"lte":50000}}` selects values from 1000 through 50000, including both limits.
 
 To find an unset value, use `null` with `equals`. For example, `{"owner":null}` finds deals without an owner. The `in` and `not_in` lists can't contain `null`. Unset values never match `gte` or `lte`.
 
-Text matching ignores case and extra whitespace. Name matching also ignores punctuation. IDs have to match exactly. Domain and email filters require valid domains or email addresses, not arbitrary text; use the same formats as [record writes](records.md#fields-and-matching). A domain filter compares domains the same way as [record writes](records.md#edge-cases-and-formatting-details), so `acme.example.com` also finds `www.acme.example.com`. Stage filters take stage names, archived stages included. An unknown stage name returns `invalid_input` along with the stage names.
+Text matching ignores case and extra whitespace. Name matching also ignores punctuation. `contains` uses the same rules. IDs must match exactly.
+
+- **`contains`** finds any part of the text. A name text that is only punctuation fails. To match any of several texts, use [`or`](#any-of-several-filters). When you know the full name, use `equals`: results come back by last update, not by how well they match.
+- **Domains and emails:** `equals` needs a valid domain or address, in the formats of [record writes](records.md#fields-and-matching). `contains` takes any part, such as `@acme` or `.de`, and ignores full-width forms. A domain compares without one leading `www.`, so `acme.example.com` also finds `www.acme.example.com`, and `www` alone does not find `www.acme.org`.
+- **Stages:** filters take stage names, archived stages included. An unknown stage name returns `invalid_input` with the stage names.
+
+Deals with "pilot" in the name, such as "Q3 Pilot":
+
+```text
+record search {"type":"deal","filter":{"name":{"contains":"pilot"}}}
+```
 
 ## Any of several filters
 
@@ -66,7 +77,7 @@ record search {"type":"company","filter":{"or":[{"domain":{"in":["acme.example.c
 
 ## Built-in fields
 
-Text, domain, email, ID, stage and activity-kind fields accept `equals`, `in` and `not_in`. Number, date and date-time fields also accept `gte` and `lte`. `last_activity` has an operator of its own.
+Text, domain, email, ID, stage and activity-kind fields accept `equals`, `in` and `not_in`. Number, date and date-time fields also accept `gte` and `lte`. `name`, `subject`, `email` and `domain` also accept `contains`, and `body` does not. `last_activity` has an operator of its own.
 
 | Record type | Field | Value type | Accepts null |
 | --- | --- | --- | --- |
@@ -95,7 +106,7 @@ Put custom filters under `fields`, keyed by the active field name. Every custom 
 
 | Field type | Operators | Value type |
 | --- | --- | --- |
-| `text` | `equals`, `in`, `not_in` | Text of 1 to 255 characters with no hidden or direction-control character, NUL, or half of a character pair |
+| `text` | `equals`, `in`, `not_in`, `contains` | Text of 1 to 255 characters with no hidden or direction-control character, NUL, or half of a character pair |
 | `number`, `currency` | `equals`, `in`, `not_in`, `gte`, `lte` | Number |
 | `date` | `equals`, `in`, `not_in`, `gte`, `lte` | Date, such as `2026-10-31` |
 | `checkbox` | `equals`, `in`, `not_in` | `true` or `false` |
