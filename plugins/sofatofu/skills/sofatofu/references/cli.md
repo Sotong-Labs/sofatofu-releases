@@ -41,12 +41,12 @@ Run `sofatofu --help` to list the commands, and `sofatofu <noun> <verb> --help` 
 
 A command that succeeds prints its JSON result on stdout and exits with code 0. A command that fails prints the JSON error body on stderr. Its exit code depends on the `error`:
 
-| Exit code | Error |
-| --- | --- |
-| 2 | `invalid_input` |
-| 3 | `not_signed_in` |
-| 4 | No answer or server failure: `connection_failed`, `internal`, `server_busy`, `unexpected_response`, `login_unavailable`, `account_unavailable`, `update_unavailable` |
-| 1 | Every other error |
+| Exit code | Error                                                                                                                                                                |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2         | `invalid_input`                                                                                                                                                      |
+| 3         | `not_signed_in`                                                                                                                                                      |
+| 4         | No answer or server failure: `connection_failed`, `internal`, `server_busy`, `unexpected_response`, `login_unavailable`, `account_unavailable`, `update_unavailable` |
+| 1         | Every other error                                                                                                                                                    |
 
 For `not_signed_in`, sign in as [Setup and sign-in](setup.md) describes.
 

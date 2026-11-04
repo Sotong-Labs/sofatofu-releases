@@ -8,13 +8,13 @@ Retrieve data with the operations in [Records](records.md) and [Filters and pipe
 
 Lead with the finding, not a dump of the records. Use the simplest format that answers the question:
 
-| Question | Useful result | Presentation |
-| --- | --- | --- |
-| How many deals match? | The returned count and its scope | A sentence |
-| What needs attention? | Records with the relevant issue, such as no owner or no recent activity | A short, prioritised table |
-| How is the pipeline distributed? | Deal count and known value by stage or owner | A comparison table or bar chart |
-| What changed over time? | Comparable measurements for each period | A table, line chart or column chart |
-| Which records explain the result? | The relevant records and their IDs | A detail table |
+| Question                          | Useful result                                                           | Presentation                        |
+| --------------------------------- | ----------------------------------------------------------------------- | ----------------------------------- |
+| How many deals match?             | The returned count and its scope                                        | A sentence                          |
+| What needs attention?             | Records with the relevant issue, such as no owner or no recent activity | A short, prioritised table          |
+| How is the pipeline distributed?  | Deal count and known value by stage or owner                            | A comparison table or bar chart     |
+| What changed over time?           | Comparable measurements for each period                                 | A table, line chart or column chart |
+| Which records explain the result? | The relevant records and their IDs                                      | A detail table                      |
 
 ## Make a chart
 
@@ -71,11 +71,11 @@ A complete pipeline summary:
 
 > **Open pipeline by stage.** All 42 open deals in `lead` or `in_progress`. Values in EUR.
 >
-> | Stage | Deals | Known value | Deals with no value |
-> | --- | --- | --- | --- |
-> | `lead` | 18 | 54,000 | 3 |
-> | `in_progress` | 24 | 186,500 | 2 |
-> | Total | 42 | 240,500 | 5 |
+> | Stage         | Deals | Known value | Deals with no value |
+> | ------------- | ----- | ----------- | ------------------- |
+> | `lead`        | 18    | 54,000      | 3                   |
+> | `in_progress` | 24    | 186,500     | 2                   |
+> | Total         | 42    | 240,500     | 5                   |
 >
 > The total covers 37 deals with recorded values. Five deals have no recorded value.
 

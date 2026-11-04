@@ -34,14 +34,14 @@ record search {"type":"deal","filter":{"last_activity":{"older_than_days":30},"s
 
 ## Operators
 
-| Operator | Value | Meaning |
-| --- | --- | --- |
-| `equals` | One value | The field equals this value. |
-| `in` | A non-empty list | The field equals at least one listed value. |
-| `not_in` | A non-empty list | The field equals none of the listed values. Unset fields also match. |
-| `gte` | A number, date or date-time | The field is greater than or equal to this value. |
-| `lte` | A number, date or date-time | The field is less than or equal to this value. |
-| `contains` | One text value | The field holds this text. |
+| Operator   | Value                       | Meaning                                                              |
+| ---------- | --------------------------- | -------------------------------------------------------------------- |
+| `equals`   | One value                   | The field equals this value.                                         |
+| `in`       | A non-empty list            | The field equals at least one listed value.                          |
+| `not_in`   | A non-empty list            | The field equals none of the listed values. Unset fields also match. |
+| `gte`      | A number, date or date-time | The field is greater than or equal to this value.                    |
+| `lte`      | A number, date or date-time | The field is less than or equal to this value.                       |
+| `contains` | One text value              | The field holds this text.                                           |
 
 When you put several operators on one field, all of them must match. For example, `{"value":{"gte":1000,"lte":50000}}` selects values from 1000 through 50000, including both limits.
 
@@ -79,24 +79,24 @@ record search {"type":"company","filter":{"or":[{"domain":{"in":["acme.example.c
 
 Text, domain, email, ID, stage and activity-kind fields accept `equals`, `in` and `not_in`. Number, date and date-time fields also accept `gte` and `lte`. `name`, `subject`, `email` and `domain` also accept `contains`, and `body` does not. `last_activity` has an operator of its own.
 
-| Record type | Field | Value type | Accepts null |
-| --- | --- | --- | --- |
-| company | `name` | Text | No |
-| company | `domain` | Valid domain | Yes |
-| person | `name` | Text | No |
-| person | `email` | Valid email address | Yes |
-| person | `company` | Record ID | Yes |
-| deal | `name` | Text | No |
-| deal | `company` | Record ID | No |
-| deal | `stage` | Stage name | No |
-| deal | `value` | Number of 0 or more | Yes |
-| deal | `owner` | User ID | Yes |
-| deal | `expected_close_date` | Date, such as `2026-10-31` | Yes |
-| deal | `last_activity` | `{"older_than_days":N}`, with an integer from 1 to 3650 | No |
-| activity | `kind` | `call`, `meeting`, `email` or `note`, in any case | No |
-| activity | `occurred_at` | ISO 8601 date-time with `Z` or an offset, such as `2026-09-22T10:00:00Z` | No |
-| activity | `person`, `company`, `deal` | Record ID | Yes |
-| activity | `subject`, `body` | Text | Yes |
+| Record type | Field                       | Value type                                                               | Accepts null |
+| ----------- | --------------------------- | ------------------------------------------------------------------------ | ------------ |
+| company     | `name`                      | Text                                                                     | No           |
+| company     | `domain`                    | Valid domain                                                             | Yes          |
+| person      | `name`                      | Text                                                                     | No           |
+| person      | `email`                     | Valid email address                                                      | Yes          |
+| person      | `company`                   | Record ID                                                                | Yes          |
+| deal        | `name`                      | Text                                                                     | No           |
+| deal        | `company`                   | Record ID                                                                | No           |
+| deal        | `stage`                     | Stage name                                                               | No           |
+| deal        | `value`                     | Number of 0 or more                                                      | Yes          |
+| deal        | `owner`                     | User ID                                                                  | Yes          |
+| deal        | `expected_close_date`       | Date, such as `2026-10-31`                                               | Yes          |
+| deal        | `last_activity`             | `{"older_than_days":N}`, with an integer from 1 to 3650                  | No           |
+| activity    | `kind`                      | `call`, `meeting`, `email` or `note`, in any case                        | No           |
+| activity    | `occurred_at`               | ISO 8601 date-time with `Z` or an offset, such as `2026-09-22T10:00:00Z` | No           |
+| activity    | `person`, `company`, `deal` | Record ID                                                                | Yes          |
+| activity    | `subject`, `body`           | Text                                                                     | Yes          |
 
 `last_activity` matches deals that have no active activity linked directly to the deal in the last N days, including deals with no activities at all. Deleted activities don't count, nor do activities linked only to the deal's company or a person.
 
@@ -104,13 +104,13 @@ Text, domain, email, ID, stage and activity-kind fields accept `equals`, `in` an
 
 Put custom filters under `fields`, keyed by the active field name. Every custom field accepts null with `equals`.
 
-| Field type | Operators | Value type |
-| --- | --- | --- |
-| `text` | `equals`, `in`, `not_in`, `contains` | Text of 1 to 255 characters with no hidden or direction-control character, NUL, or half of a character pair |
-| `number`, `currency` | `equals`, `in`, `not_in`, `gte`, `lte` | Number |
-| `date` | `equals`, `in`, `not_in`, `gte`, `lte` | Date, such as `2026-10-31` |
-| `checkbox` | `equals`, `in`, `not_in` | `true` or `false` |
-| `select` | `equals`, `in`, `not_in` | Option name |
+| Field type           | Operators                              | Value type                                                                                                  |
+| -------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `text`               | `equals`, `in`, `not_in`, `contains`   | Text of 1 to 255 characters with no hidden or direction-control character, NUL, or half of a character pair |
+| `number`, `currency` | `equals`, `in`, `not_in`, `gte`, `lte` | Number                                                                                                      |
+| `date`               | `equals`, `in`, `not_in`, `gte`, `lte` | Date, such as `2026-10-31`                                                                                  |
+| `checkbox`           | `equals`, `in`, `not_in`               | `true` or `false`                                                                                           |
+| `select`             | `equals`, `in`, `not_in`               | Option name                                                                                                 |
 
 For example, find companies in either region with at least 50 employees:
 
