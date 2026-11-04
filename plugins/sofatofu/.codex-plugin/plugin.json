@@ -1,6 +1,6 @@
 {
   "name": "sofatofu",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "description": "Let your agent keep your CRM up to date. Ask it to find contacts, log calls, and update deals in sofatofu. See what changed and why, and undo most changes.",
   "author": {
     "name": "Sam Kah Man",
@@ -91,7 +91,7 @@
         }
       },
       "publication": {
-        "release_notes": "### 🔎 Find records with part of the text\n\nYour agent can use `contains` to search company, person, and deal names, activity subjects, custom text fields, person emails, and company domains. For example, `{\"name\":{\"contains\":\"pilot\"}}` finds deals such as \"Q3 Pilot\", and `{\"email\":{\"contains\":\"@acme\"}}` finds people by part of their email address.\n\nMatching ignores case. Name matching also ignores punctuation. Activity bodies do not accept `contains`.\n\n### 🔧 Everyday improvements\n\n- The setup prompt directs Claude users to the official Sofatofu connector, ChatGPT users to a custom MCP connector, and coding agents to the CLI.\n- GitHub release source archives include plugin files that match the release version.\n\n### 📄 Terms and privacy\n\nThe [Terms of Service](https://sofatofu.com/terms) and [Privacy Policy](https://sofatofu.com/privacy), effective 3 November 2026, describe the 14-day trial, paid subscriptions, cancellation, and how Stripe handles payments and billing data.\n\n### ⚠️ Before you upgrade\n\nYour agent can receive company domains and the domain part of person emails as Unicode text, such as `münchen.de`, instead of ASCII punycode such as `xn--mnchen-3ya.de`. Member and invitation emails keep their ASCII domain format."
+        "release_notes": "### 🔧 Everyday improvements\n\n- The plugin includes OAuth sign-in settings for the OpenAI plugin portal."
       }
     }
   }

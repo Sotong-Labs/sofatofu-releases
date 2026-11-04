@@ -10,7 +10,7 @@ description: >-
   workspace settings.
 license: MIT
 metadata:
-  version: 0.7.4
+  version: 0.7.5
 ---
 
 # Sofatofu
@@ -53,15 +53,15 @@ An example line is not a shell command. [Use the CLI](references/cli.md) shows h
 
 Every list takes `limit` (1 to 200, default 10) and `offset` (default 0). To get the next page, pass the `next.offset` from the last one. An ID list or a write can hold at most 200 items.
 
-| Noun | Verbs | Reference |
-| --- | --- | --- |
-| `record` | `search`, `get`, `create`, `update`, `delete` | [Records](references/records.md), [Filters and pipeline queries](references/filters.md) |
-| `change` | `list`, `get`, `reverse` | [Change history and reversal](references/changes.md) |
-| `workspace` | `get`, `configure` | [Workspace configuration](references/workspace.md) |
-| `member` | `list`, `invite`, `remove` | [Members and invitations](references/members.md) |
-| `invitation` | `list`, `revoke` | [Members and invitations](references/members.md) |
-| `auth` | `whoami` | [The workspace of the connection](#the-workspace-of-the-connection) |
-| `feedback` | `send` | [Send feedback](#send-feedback) |
+| Noun         | Verbs                                         | Reference                                                                               |
+| ------------ | --------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `record`     | `search`, `get`, `create`, `update`, `delete` | [Records](references/records.md), [Filters and pipeline queries](references/filters.md) |
+| `change`     | `list`, `get`, `reverse`                      | [Change history and reversal](references/changes.md)                                    |
+| `workspace`  | `get`, `configure`                            | [Workspace configuration](references/workspace.md)                                      |
+| `member`     | `list`, `invite`, `remove`                    | [Members and invitations](references/members.md)                                        |
+| `invitation` | `list`, `revoke`                              | [Members and invitations](references/members.md)                                        |
+| `auth`       | `whoami`                                      | [The workspace of the connection](#the-workspace-of-the-connection)                     |
+| `feedback`   | `send`                                        | [Send feedback](#send-feedback)                                                         |
 
 To move records in from another CRM or a spreadsheet, or out to a file, read [Import and export](references/import-export.md). To bring in data from mail, calendars and other tools, read [Integrations](references/integrations.md).
 
@@ -122,9 +122,7 @@ The response looks roughly like this (abridged, with illustrative values):
 {
   "scope": { "workspace_id": "w3q8z5mtc2vn" },
   "read_id": "<read_id>",
-  "items": [
-    { "id": "k7m2p9qx4dz1", "name": "Acme", "domain": "acme.example.com" }
-  ],
+  "items": [{ "id": "k7m2p9qx4dz1", "name": "Acme", "domain": "acme.example.com" }],
   "total": 1
 }
 ```
@@ -149,15 +147,15 @@ Replace the placeholder IDs and dates in examples with real values.
 
 ### Which read goes with which write
 
-| Write | Read |
-| --- | --- |
-| Create records | `record search` with the filter from [The search before a create](#the-search-before-a-create) |
-| Update or delete records | `record search`, or `record get` for known IDs |
-| Reverse a change | `record search` or `record get`, with `include` set to `deleted` to restore records, or `workspace get` for a configuration change |
-| Change workspace settings | `workspace get` |
-| Remove a member | `member list` |
-| Invite someone | `invitation list` with `email` set to the invited email |
-| Revoke an invitation | `invitation list` |
+| Write                     | Read                                                                                                                               |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Create records            | `record search` with the filter from [The search before a create](#the-search-before-a-create)                                     |
+| Update or delete records  | `record search`, or `record get` for known IDs                                                                                     |
+| Reverse a change          | `record search` or `record get`, with `include` set to `deleted` to restore records, or `workspace get` for a configuration change |
+| Change workspace settings | `workspace get`                                                                                                                    |
+| Remove a member           | `member list`                                                                                                                      |
+| Invite someone            | `invitation list` with `email` set to the invited email                                                                            |
+| Revoke an invitation      | `invitation list`                                                                                                                  |
 
 A read only vouches for the records it returned. That's enough to update or delete records you've found. Creating something or inviting someone is stricter, because you also have to show the item doesn't already exist. Search from offset 0 with a filter every new item would match, and check that `total` is no bigger than `limit`, so nothing is hiding on a later page.
 
@@ -169,15 +167,15 @@ So prefer `record search` before record writes, with filters taken from the requ
 
 Search each batch once, with one [`or`](references/filters.md#any-of-several-filters) filter and `limit` set to 200. Put the filters from this table in the `or` list:
 
-| Item | Filter in the `or` list | What it returns |
-| --- | --- | --- |
-| Company with a domain | `{"domain":{"in":[...]}}`, one for the batch | At most one record for each domain |
-| Person with an email | `{"email":{"in":[...]}}`, one for the batch | At most one record for each email |
-| Company with no domain | `{"name":{"in":[...]}}`, one for the batch | Loose matches |
-| Person with a company and no email | `{"name":"<name>","company":"<company id>"}`, one for each item | Loose matches |
-| Person with no email and no company | `{"name":"<name>","company":null}`, one for each item | People with this name and no company. None of them is a loose match. The search only gives the `read_id` for the create. |
-| Deal | `{"name":"<name>","company":"<company id>"}`, one for each item | Loose matches |
-| Activity | `{"kind":"<kind>","occurred_at":"<time>","person":"<person id>","company":null,"deal":null}`, one for each item, with `null` for an empty link | Loose matches |
+| Item                                | Filter in the `or` list                                                                                                                        | What it returns                                                                                                          |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Company with a domain               | `{"domain":{"in":[...]}}`, one for the batch                                                                                                   | At most one record for each domain                                                                                       |
+| Person with an email                | `{"email":{"in":[...]}}`, one for the batch                                                                                                    | At most one record for each email                                                                                        |
+| Company with no domain              | `{"name":{"in":[...]}}`, one for the batch                                                                                                     | Loose matches                                                                                                            |
+| Person with a company and no email  | `{"name":"<name>","company":"<company id>"}`, one for each item                                                                                | Loose matches                                                                                                            |
+| Person with no email and no company | `{"name":"<name>","company":null}`, one for each item                                                                                          | People with this name and no company. None of them is a loose match. The search only gives the `read_id` for the create. |
+| Deal                                | `{"name":"<name>","company":"<company id>"}`, one for each item                                                                                | Loose matches                                                                                                            |
+| Activity                            | `{"kind":"<kind>","occurred_at":"<time>","person":"<person id>","company":null,"deal":null}`, one for each item, with `null` for an empty link | Loose matches                                                                                                            |
 
 ```text
 record search {"type":"person","filter":{"or":[{"email":{"in":["ann@example.com"]}},{"name":"John Smith","company":"k7m2p9qx4dz1"},{"name":"Mia Chen","company":null}]},"include":"deleted","limit":200}
@@ -212,16 +210,16 @@ For an import from a file, follow [Import and export](references/import-export.m
 
 A failed operation returns a JSON body `{ error, message }`, sometimes with more detail, such as `index` or `existing_id`. Start with the message and the table below before asking anyone for help. For a failed write, the table also says when to read again.
 
-| Error | What it means and what to do |
-| --- | --- |
-| `read_stale` | The data changed after your read. Repeat the original read, review the current data, then decide whether to write again. |
-| `read_scope` | The read didn't include what this write needs. Use the matching read from the table above. |
-| `read_expired` | The `read_id` is missing, already used, or older than 24 hours. Read again. |
-| `write_conflict` | Other writes kept the workspace busy, and this write changed nothing. Read again, then retry the write with the new `read_id`. |
-| `apply_failed` | Read the current state before trying another write, and check whether the result you wanted is already there. |
-| `server_busy` | The server was too busy to start the request, and nothing changed. Retry the same request in a few seconds. For a write, the same `read_id` still works. |
-| `invalid_input`, `duplicate`, `deleted`, `linked` | The write did not use the read. Follow the error message. If you only correct the request, retry with the same `read_id`. If you change data first, read again. See [Create records](references/records.md#create-records) and [Update records](references/records.md#update-records) for record conflicts. |
-| `possible_duplicate` | Items match existing records loosely, for example by name. The write did not use the read. Inspect the listed records. If an item is one of them, update that record instead. If the records are different, send the same write again with `force` set to `true` and the same `read_id`, and say in the `reason` why they are different. See [Create records](references/records.md#create-records). |
+| Error                                             | What it means and what to do                                                                                                                                                                                                                                                                                                                                                                         |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `read_stale`                                      | The data changed after your read. Repeat the original read, review the current data, then decide whether to write again.                                                                                                                                                                                                                                                                             |
+| `read_scope`                                      | The read didn't include what this write needs. Use the matching read from the table above.                                                                                                                                                                                                                                                                                                           |
+| `read_expired`                                    | The `read_id` is missing, already used, or older than 24 hours. Read again.                                                                                                                                                                                                                                                                                                                          |
+| `write_conflict`                                  | Other writes kept the workspace busy, and this write changed nothing. Read again, then retry the write with the new `read_id`.                                                                                                                                                                                                                                                                       |
+| `apply_failed`                                    | Read the current state before trying another write, and check whether the result you wanted is already there.                                                                                                                                                                                                                                                                                        |
+| `server_busy`                                     | The server was too busy to start the request, and nothing changed. Retry the same request in a few seconds. For a write, the same `read_id` still works.                                                                                                                                                                                                                                             |
+| `invalid_input`, `duplicate`, `deleted`, `linked` | The write did not use the read. Follow the error message. If you only correct the request, retry with the same `read_id`. If you change data first, read again. See [Create records](references/records.md#create-records) and [Update records](references/records.md#update-records) for record conflicts.                                                                                          |
+| `possible_duplicate`                              | Items match existing records loosely, for example by name. The write did not use the read. Inspect the listed records. If an item is one of them, update that record instead. If the records are different, send the same write again with `force` set to `true` and the same `read_id`, and say in the `reason` why they are different. See [Create records](references/records.md#create-records). |
 
 If an operation ends without a clear result, read the current state before you try the write again.
 

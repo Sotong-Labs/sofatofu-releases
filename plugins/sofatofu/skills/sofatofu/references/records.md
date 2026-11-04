@@ -67,11 +67,11 @@ Omitted fields keep their values, and only JSON `null` clears one. Inside `patch
 
 These patches are rejected: an empty object, an unknown key, or `null` on a required field such as `name`. Only some fields can be cleared:
 
-| Type | Fields you can clear |
-| --- | --- |
-| `company` | `domain` |
-| `person` | `email`, `company` |
-| `deal` | `value`, `owner`, `expected_close_date` |
+| Type       | Fields you can clear                           |
+| ---------- | ---------------------------------------------- |
+| `company`  | `domain`                                       |
+| `person`   | `email`, `company`                             |
+| `deal`     | `value`, `owner`, `expected_close_date`        |
 | `activity` | `person`, `company`, `deal`, `subject`, `body` |
 
 An activity must keep at least one person, company or deal link.
@@ -111,12 +111,12 @@ If you don't know whether a create worked, search again before retrying. If you 
 
 A strict key can belong to at most one record in a workspace. A deleted record keeps its key until permanent removal after 30 days. A record without a value for its strict-key field has no strict key. A loose match is another active record of the same type with equal values in every loose-match field. Names compare without case, extra spaces, and punctuation. An empty loose-match field prevents a loose match, but a missing `person`, `company` or `deal` of an activity matches the same missing field. A deleted record never counts. A create, or an update that changes a loose-match field, gets `possible_duplicate` unless `force` is `true`. A change of only case, spaces, or punctuation does not count. `force` never skips a strict key. Other fields can repeat.
 
-| Type | Required on create | Also accepts | Strict key | Loose match |
-| --- | --- | --- | --- | --- |
-| `company` | `name` | `domain` | `domain`, without one [leading `www.`](#edge-cases-and-formatting-details) | `name` |
-| `person` | `name` | `email`, `company` | `email` | `name` and `company` |
-| `deal` | `name`, `company` | `stage`, `value`, `owner`, `expected_close_date` | None | `name` and `company` |
-| `activity` | `kind`, `occurred_at`, and at least one of `person`, `company`, `deal` | `subject`, `body`, and more than one of `person`, `company`, `deal` | None | `kind`, `occurred_at`, `person`, `company` and `deal` |
+| Type       | Required on create                                                     | Also accepts                                                        | Strict key                                                                 | Loose match                                           |
+| ---------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `company`  | `name`                                                                 | `domain`                                                            | `domain`, without one [leading `www.`](#edge-cases-and-formatting-details) | `name`                                                |
+| `person`   | `name`                                                                 | `email`, `company`                                                  | `email`                                                                    | `name` and `company`                                  |
+| `deal`     | `name`, `company`                                                      | `stage`, `value`, `owner`, `expected_close_date`                    | None                                                                       | `name` and `company`                                  |
+| `activity` | `kind`, `occurred_at`, and at least one of `person`, `company`, `deal` | `subject`, `body`, and more than one of `person`, `company`, `deal` | None                                                                       | `kind`, `occurred_at`, `person`, `company` and `deal` |
 
 Every type also accepts `fields`, a JSON object whose keys are active field names from `workspace get`. A select field takes an option name. How to fill them in:
 
