@@ -1,6 +1,6 @@
 {
   "name": "sofatofu",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "description": "Let your agent keep your CRM up to date. Ask it to find contacts, log calls, and update deals in sofatofu. See what changed and why, and undo most changes.",
   "author": {
     "name": "Sam Kah Man",
@@ -91,7 +91,7 @@
         }
       },
       "publication": {
-        "release_notes": "### 🔧 Everyday improvements\n\n- The plugin includes OAuth sign-in settings for the OpenAI plugin portal."
+        "release_notes": "### 🔧 Everyday improvements\n\n- When your agent has no Sofatofu connector or CLI, the agent skill points you to [sofatofu.com](https://sofatofu.com) for setup. It asks you to run updates, such as `sofatofu update`, yourself.\n- For CLI sign-in, the agent skill and the installation guide ask you to open the link, sign in, choose a workspace, and approve access."
       }
     }
   }

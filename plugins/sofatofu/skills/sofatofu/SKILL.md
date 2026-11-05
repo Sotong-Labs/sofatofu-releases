@@ -10,7 +10,7 @@ description: >-
   workspace settings.
 license: MIT
 metadata:
-  version: 0.7.5
+  version: 0.7.6
 ---
 
 # Sofatofu
@@ -19,7 +19,7 @@ Sofatofu is an AI-first CRM designed for safe autonomous work. Your agent manage
 
 Start here:
 
-- If you have no sofatofu tools and no `sofatofu` command, follow the [installation guide](https://sofatofu.com/docs/installation.md) first.
+- If you have no sofatofu tools and no `sofatofu` command, ask the user to set up Sofatofu at [sofatofu.com](https://sofatofu.com) first.
 - If no user is signed in, read [Setup and sign-in](references/setup.md) first.
 - If you work through the `sofatofu` CLI, read [Use the CLI](references/cli.md) before your first command.
 

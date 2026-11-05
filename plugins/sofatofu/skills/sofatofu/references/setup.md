@@ -2,7 +2,7 @@
 
 Each Sofatofu connection gives access to one workspace, which the user chooses when approving access. If a command or tool fails, follow the instructions in its `message`.
 
-If neither Sofatofu tools nor the `sofatofu` command are available, follow the [installation guide](https://sofatofu.com/docs/installation.md).
+If neither Sofatofu tools nor the `sofatofu` command are available, ask the user to set up Sofatofu at [sofatofu.com](https://sofatofu.com).
 
 ## Check the connection
 
@@ -18,7 +18,7 @@ When the check returns the user and the workspace, make sure they are the ones t
 If the check tells you to sign in, connect with what you have, then check again. A new connection needs the user to sign in, approve access and choose the workspace in the browser. If the task names a workspace, tell the user which one to choose.
 
 - **Connector:** if the app lists the official Sofatofu connector in its connector directory or connection controls, offer it there. If not, ask the user to add a custom connector with the URL `https://sofatofu.com/mcp`. In Claude, offer the [official Sofatofu connector](https://claude.ai/directory/sofatofu).
-- **CLI:** run `sofatofu auth login`. Until the user approves access, it returns a link (`verification_uri_complete`) and a code (`user_code`). Give them to the user once, then run the same command again to check. If you get the same link again, approval is still pending, so do not ask the user again. You are signed in when the command returns the user and the workspace.
+- **CLI:** run `sofatofu auth login`. Until the user approves access, it returns a link (`verification_uri_complete`) and a code (`user_code`). Give the user the link and code once. Ask them to open the link, sign in, choose a workspace, and approve access. Run the same command again to check. If you get the same link again, approval is still pending, so do not ask the user again. You are signed in when the command returns the user and the workspace.
 
 ## Switch workspace
 
@@ -28,8 +28,8 @@ If the check tells you to sign in, connect with what you have, then check again.
 ## Update
 
 - **Connector:** there's nothing to update. The connector always serves the current operations.
-- **CLI:** `sofatofu update` installs the latest CLI release using its original installation method and refreshes the installed copies of this skill. It doesn't install an agent, ask for input or sign in. Use it instead of `npx skills update`, then read the updated `SKILL.md`.
-- **Skill only:** run `npx skills update sofatofu`, then read the updated `SKILL.md`.
+- **CLI:** ask the user to run `sofatofu update`. It updates the CLI and the installed copies of this skill. Then read the updated `SKILL.md`.
+- **Skill only:** ask the user to update the skill. Then read the updated `SKILL.md`.
 
 ## Sign out
 
@@ -42,4 +42,4 @@ Uninstall only when the user asks you to remove Sofatofu.
 
 - **Connector:** ask the user to remove the connector in the app and revoke the connection in their account settings.
 - **CLI:** `sofatofu uninstall` signs out and removes the CLI, its local configuration, and skill copies from the home folder. It returns the removed paths as JSON. Show the user any `warning`. Project skill copies remain. Remove those only if the user asks.
-- **Skill only:** run `npx skills remove sofatofu`.
+- **Skill only:** ask the user to remove the skill.

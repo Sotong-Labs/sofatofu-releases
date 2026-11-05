@@ -54,5 +54,5 @@ For `not_signed_in`, sign in as [Setup and sign-in](setup.md) describes.
 
 A command can print a line that starts with `warning:` or `notice:` on stderr, after its result. These lines don't change the result or the exit code.
 
-- **A skill version warning:** follow it once. Carry on with the user's task even if the warning stays. Whether the task succeeds or fails, mention the warning in your final response and ask the user to start a new agent session.
+- **A skill version warning:** carry on with the user's task. Whether the task succeeds or fails, mention the warning in your final response, and ask the user to run `sofatofu update` and start a new agent session.
 - **A newer release notice:** tell the user they can install it with `sofatofu update`.
