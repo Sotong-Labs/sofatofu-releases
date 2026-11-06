@@ -16,7 +16,7 @@ Each stage item has `id`, `name`, `position` and `archived`. Each field item has
 
 Pass the `read_id` from `workspace get` to `workspace configure`. Each call takes exactly one of `currency`, `name`, `stage` or `field`, along with `reason` and `read_id`.
 
-Any configuration change makes an earlier configuration read stale, so read again before each write. The examples below are separate writes. They aren't a sequence that can share one `read_id`.
+Any configuration change makes an earlier configuration read stale. Each example below is a separate write with its own `read_id`.
 
 Creating a stage or field returns its new ID in `ids`. An update returns only `change_id` and `effect`.
 
@@ -68,12 +68,11 @@ What to know about stages:
 - `position` is an integer starting at 0. A new stage with no position goes last.
 - Deal operations use stage names, not stage IDs. Deal writes accept only active stages. Stage filters also accept archived stages.
 - Archived stages stay in `workspace get`. Set `archived` to `false` to make one active again.
-- If active deals use a stage, archiving it returns `linked` along with the count. Search deals by that stage and move them to another stage first. Deleted deals don't block it, and they keep the archived stage.
-- Reversing a stage's creation archives the stage, and it keeps its name. Like any reversal that would archive a stage, it returns `linked` while active deals use the stage.
+- Reversing a stage's creation archives the stage, and it keeps its name.
 
 ## Create or change a custom field
 
-Pass `field` a JSON object. To create a field, leave out `id` and supply `record_type`, `name` and `type`. The types are `text`, `number`, `currency`, `date`, `checkbox` and `select`.
+Pass `field` a JSON object. To create a field, leave out `id` and supply `record_type`, `name` and `type`. The types are `text`, `number`, `currency`, `date`, `checkbox`, `select` and `multi_select`. A `select` field holds one option, and a `multi_select` field holds a list of options, such as tags.
 
 Create a select field with three options:
 
@@ -97,7 +96,7 @@ What to know about fields:
 
 - Field and option names hold 1 to 255 characters. Field names must be unique within a record type, archived names included. Comparison ignores case and extra whitespace.
 - `record_type`, `type` and `currency` can't change. If one is wrong, archive the field and create a new one with a different name.
-- Only a currency field accepts `currency`, and only a select field accepts `options`.
+- Only a currency field accepts `currency`, and only a `select` or `multi_select` field accepts `options`.
 - An option without an `id` adds a choice, and an option with an `id` renames that choice. Options you leave out stay as they are. You can't delete or archive options, and their names must be unique within the field.
 - To stop using a field, set `archived` to `true`. Archived fields stay in `workspace get`, but record writes and filters reject them, and record reads leave out their values. The stored values are kept, so they come back if you set `archived` to `false`.
 - Reversing a field's creation archives the field. The field keeps its name, and records keep their stored values for it.

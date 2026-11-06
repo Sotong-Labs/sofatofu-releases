@@ -47,10 +47,11 @@ When you put several operators on one field, all of them must match. For example
 
 To find an unset value, use `null` with `equals`. For example, `{"owner":null}` finds deals without an owner. The `in` and `not_in` lists can't contain `null`. Unset values never match `gte` or `lte`.
 
-Text matching ignores case and extra whitespace. Name matching also ignores punctuation. `contains` uses the same rules. IDs must match exactly.
+Text matching ignores extra whitespace and, except for `source_id`, ignores case. Name matching also ignores punctuation. `contains` follows these same rules. Record IDs must match exactly. All `source_id` comparisons are case-sensitive: `equals`, `in`, `not_in` and `contains`.
 
 - **`contains`** finds any part of the text. A name text that is only punctuation fails. To match any of several texts, use [`or`](#any-of-several-filters). When you know the full name, use `equals`: results come back by last update, not by how well they match.
 - **Domains and emails:** `equals` needs a valid domain or address, in the formats of [record writes](records.md#fields-and-matching). `contains` takes any part, such as `@acme` or `.de`, and ignores full-width forms. A domain compares without one leading `www.`, so `acme.example.com` also finds `www.acme.example.com`, and `www` alone does not find `www.acme.org`.
+- **Phones:** a phone compares as text, with no change to its digits. `{"phone":{"contains":"010-2030"}}` finds `+1 (555) 010-2030`, and `0102030` does not.
 - **Stages:** filters take stage names, archived stages included. An unknown stage name returns `invalid_input` with the stage names.
 
 Deals with "pilot" in the name, such as "Q3 Pilot":
@@ -66,39 +67,43 @@ Use `or` to find records that match at least one filter in a list.
 Each filter must contain at least one condition. All conditions within that filter must match.
 
 ```text
-record search {"type":"company","filter":{"or":[{"domain":{"in":["acme.example.com","bolt.example.com"]}},{"name":{"in":["Cobalt"]}}]},"include":"deleted","limit":200}
+record search {"type":"company","filter":{"or":[{"domain":{"in":["acme.example.com","bolt.example.com"]}},{"name":{"in":["Cobalt"]}}]},"limit":200}
 ```
 
 - The list can contain 1 to 200 filters.
 - `or` must be the only top-level key. To apply a condition to every filter in the list, repeat it in each filter.
 - Filters in the list cannot contain `or`.
-- `include` applies to the whole search.
 - Each matching record appears once in the results, even if it matches several filters. `total` counts it once.
 
 ## Built-in fields
 
-Text, domain, email, ID, stage and activity-kind fields accept `equals`, `in` and `not_in`. Number, date and date-time fields also accept `gte` and `lte`. `name`, `subject`, `email` and `domain` also accept `contains`, and `body` does not. `last_activity` has an operator of its own.
+Text, domain, email, ID, stage and activity-kind fields accept `equals`, `in` and `not_in`. Number, date and date-time fields also accept `gte` and `lte`. `name`, `subject`, `email`, `domain`, `phone`, `job_title` and `source_id` also accept `contains`, and `body` does not. `last_activity` has an operator of its own.
 
-| Record type | Field                       | Value type                                                               | Accepts null |
-| ----------- | --------------------------- | ------------------------------------------------------------------------ | ------------ |
-| company     | `name`                      | Text                                                                     | No           |
-| company     | `domain`                    | Valid domain                                                             | Yes          |
-| person      | `name`                      | Text                                                                     | No           |
-| person      | `email`                     | Valid email address                                                      | Yes          |
-| person      | `company`                   | Record ID                                                                | Yes          |
-| deal        | `name`                      | Text                                                                     | No           |
-| deal        | `company`                   | Record ID                                                                | No           |
-| deal        | `stage`                     | Stage name                                                               | No           |
-| deal        | `value`                     | Number of 0 or more                                                      | Yes          |
-| deal        | `owner`                     | User ID                                                                  | Yes          |
-| deal        | `expected_close_date`       | Date, such as `2026-10-31`                                               | Yes          |
-| deal        | `last_activity`             | `{"older_than_days":N}`, with an integer from 1 to 3650                  | No           |
-| activity    | `kind`                      | `call`, `meeting`, `email` or `note`, in any case                        | No           |
-| activity    | `occurred_at`               | ISO 8601 date-time with `Z` or an offset, such as `2026-09-22T10:00:00Z` | No           |
-| activity    | `person`, `company`, `deal` | Record ID                                                                | Yes          |
-| activity    | `subject`, `body`           | Text                                                                     | Yes          |
+| Record type | Field                 | Value type                                                               | Accepts null |
+| ----------- | --------------------- | ------------------------------------------------------------------------ | ------------ |
+| company     | `name`                | Text                                                                     | No           |
+| company     | `domain`              | Valid domain                                                             | Yes          |
+| person      | `name`                | Text                                                                     | No           |
+| person      | `email`               | Valid email address                                                      | Yes          |
+| person      | `company`             | Record ID                                                                | Yes          |
+| person      | `phone`, `job_title`  | Text                                                                     | Yes          |
+| deal        | `name`                | Text                                                                     | No           |
+| deal        | `company`             | Record ID                                                                | No           |
+| deal        | `stage`               | Stage name                                                               | No           |
+| deal        | `value`               | Number of 0 or more                                                      | Yes          |
+| deal        | `owner`               | User ID                                                                  | Yes          |
+| deal        | `expected_close_date` | Date, such as `2026-10-31`                                               | Yes          |
+| deal        | `last_activity`       | `{"older_than_days":N}`, with an integer from 1 to 3650                  | No           |
+| activity    | `kind`                | `call`, `meeting`, `email` or `note`, in any case                        | No           |
+| activity    | `occurred_at`         | ISO 8601 date-time with `Z` or an offset, such as `2026-09-22T10:00:00Z` | No           |
+| activity    | `people`              | Person ID                                                                | Yes          |
+| activity    | `company`, `deal`     | Record ID                                                                | Yes          |
+| activity    | `subject`, `body`     | Text                                                                     | Yes          |
+| every type  | `source_id`           | Text                                                                     | Yes          |
 
-`last_activity` matches deals that have no active activity linked directly to the deal in the last N days, including deals with no activities at all. Deleted activities don't count, nor do activities linked only to the deal's company or a person.
+The `people` filter finds activities linked to any of the given people, including activities linked to other people too. `not_in` finds activities linked to none of the given people. Use `null` to find activities with no linked people.
+
+`last_activity` finds deals with no activity in the last N days, including deals with no activity at all. It counts only activities linked directly to the deal, not those linked only to its company or a person.
 
 ## Custom fields
 
@@ -111,6 +116,9 @@ Put custom filters under `fields`, keyed by the active field name. Every custom 
 | `date`               | `equals`, `in`, `not_in`, `gte`, `lte` | Date, such as `2026-10-31`                                                                                  |
 | `checkbox`           | `equals`, `in`, `not_in`               | `true` or `false`                                                                                           |
 | `select`             | `equals`, `in`, `not_in`               | Option name                                                                                                 |
+| `multi_select`       | `equals`, `in`, `not_in`               | Option name                                                                                                 |
+
+A `multi_select` filter compares each option on its own. `equals` and `in` find records that hold at least one of the given options, also when they hold other options. `not_in` finds records that hold none of them.
 
 For example, find companies in either region with at least 50 employees:
 

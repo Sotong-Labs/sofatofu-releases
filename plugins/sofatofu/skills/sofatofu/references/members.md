@@ -15,7 +15,7 @@ invitation list {"limit":100}
 
 `member list` returns active members, and `invitation list` returns pending invitations. Set `email` in `invitation list` to see only the pending invitations for one address. The match ignores case and surrounding spaces.
 
-A member item has `id`, `name`, `email` and `role`. The `id` is the member's user ID. Use it for the `owner` key in `records` and `patch`, and for the `author` filter of `change list`.
+Each member has an `id`, `name`, `email` and `role`. The `id` is their user ID. Use it as the `owner` when creating or updating a deal, or as the `author` filter in `change list`.
 
 An invitation item has `id`, `email`, `role`, `expires_at` and `invitation_link`.
 
@@ -26,6 +26,8 @@ First read the pending invitations for the email you plan to invite:
 ```text
 invitation list {"email":"colleague@example.com"}
 ```
+
+If a pending invitation turns up, don't invite again. An empty result doesn't prove the person isn't a member.
 
 If `total` is 0, no pending invitation uses that email, so invite with that read's `read_id`:
 
@@ -40,13 +42,6 @@ Check `delivery.sent`. If email delivery failed, the invitation still exists. In
 An invitation can be accepted for 48 hours. The invited person has to sign in with the invited email address and accept it in the browser. Once it expires, you can invite the person again.
 
 Your part of the task is done once you've created the invitation and reported delivery. Wait for acceptance only if the task needs it.
-
-### If the invite is refused
-
-- **`invalid_input` saying the email already belongs to a member or pending invitation.** Check the workspace's members and pending invitations. An empty invitation read doesn't prove the person isn't a member.
-- **Wrong read.** The read has to be for the email you're inviting. A read for a different email, or an incomplete page, returns `read_scope`.
-- **A pending invitation turned up.** Don't invite again.
-- **`read_stale`.** Repeat the same `email` read and check the result again.
 
 ## Remove a member
 

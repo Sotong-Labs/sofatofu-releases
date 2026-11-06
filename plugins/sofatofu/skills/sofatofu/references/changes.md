@@ -4,7 +4,7 @@ Every write is recorded as a change. Change history tells you who made a change,
 
 Every member can read change history. Change reads have no `read_id`.
 
-Changes and deleted records are removed after 30 days. After that, `change reverse` can't restore them.
+Sofatofu keeps change history, including copies of deleted records, for 30 days. After that, you can no longer restore those records with `change reverse`.
 
 ## Find a change
 
@@ -61,26 +61,22 @@ Inspect the change first and check `reversibility`:
 
 `all` and `reversible: true` mean that no later change has touched the records. The undo is still a write, so it can fail like any write. For example, undoing a domain change fails as `duplicate` if another company has taken the old domain since. Undoing a creation fails as `linked` while other records link to the new record. The error tells you what to fix. An undo or a restore checks no [loose match](records.md#fields-and-matching), so it can give back a name that another record now holds.
 
-You can undo only the latest change to a record. For example, change 1 renames Acme, and change 2 sets its phone. You can't undo change 1. Undoing change 2 doesn't help, because that reversal is a newer change on Acme. To restore the old value, make a normal update.
+You can undo only the latest change to a record. For example, change 1 renames Acme, and change 2 sets its phone. You can't undo change 1.
 
 No two changes with `reversibility: "all"` share a record, so undoing one never blocks another.
 
 By default a reversal covers every item in the change. To reverse only some items, list them in `record_ids`. This works for record and configuration changes alike. Choose the items the request covers, and no others.
 
-Before you reverse, read the current data and pass that read's `read_id`:
-
-- **Record changes:** use `record search` or `record get`, and check that each selected record matches the request. Set `include` to `deleted` to restore records. If any record the read returns changes before the reversal, the reversal fails with `read_stale`, so keep the read narrow.
-- **Currency, stage or field changes:** use `workspace get`. Only owners can reverse these changes; other members receive `forbidden`.
+A reversal takes no `read_id`. `reversible: true` shows that no write has touched the record since the change, so you don't read the records first. Only owners can reverse currency, stage or field changes; other members receive `forbidden`.
 
 For example, restore one person from a deletion of many and leave the others deleted:
 
 ```text
 change get {"id":"m5n1p8q2r7s4"}
-record search {"type":"person","filter":{"email":"ana@example.com"},"include":"deleted","limit":200}
-change reverse {"id":"m5n1p8q2r7s4","record_ids":["c4d8e2f6g0h3"],"reason":"Restore the contact removed by mistake","read_id":"<read_id>"}
+change reverse {"id":"m5n1p8q2r7s4","record_ids":["c4d8e2f6g0h3"],"reason":"Restore the contact removed by mistake"}
 ```
 
-Either every selected record is reversed or none is. You can reverse the rest later with a fresh read. A selection that includes an already-reversed record returns `reversal_conflict`.
+Either every selected record is reversed or none is. You can reverse the rest later. A selection that includes an already-reversed record returns `reversal_conflict`.
 
 Dependency checks still look at records outside your selection. A restored record needs its link targets to exist. And reversing a creation can't leave active records linked to a record it would delete.
 
@@ -88,15 +84,6 @@ When you report a reversal, give the number of items reversed and the new `chang
 
 ## Resolve a rejected reversal
 
-Stay within the request when you recover. Being asked to reverse one change doesn't authorize deleting or relinking other records. Ask only about extra changes that fall outside the request. Report the outcome as it is: which error you hit, what you did, and what's still blocked. See [Talking to the user](../SKILL.md#talking-to-the-user).
+Follow the error message, and stay within the request when you recover. Being asked to reverse one change doesn't authorize deleting or relinking other records. Ask only about extra changes that fall outside the request. When it fits the request, a `record update` can also make the correction. Report the outcome as it is: which error you hit, what you did, and what's still blocked. See [Talking to the user](../SKILL.md#talking-to-the-user).
 
-| Error                                       | What it means and what to do                                                                                                                                                                                                                                                                                                            |
-| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `reversal_expired`                          | The change is unknown or removed, or its kind can't be undone. Read the current state, and make a new write if the correction is still possible.                                                                                                                                                                                        |
-| `reversal_conflict` with `later_change_ids` | Later changes touched the selected records. Make a new write with the values you want. Reversing those later changes won't clear the conflict, because they stay in history.                                                                                                                                                            |
-| `reversal_conflict` with `type` and `id`    | The reversal would clear the workspace currency while an active deal has a value. Resolve the deal values that block the reversal.                                                                                                                                                                                                      |
-| `invalid_input` naming `record_ids`         | The list is wrong. Run `change get` to see the change's items, then correct it.                                                                                                                                                                                                                                                         |
-| `invalid_input` with `id`                   | The reversal would put back a value that's no longer valid for the record in `id`. The message names the problem. Make the value valid again, for example by restoring a deleted link target, or make a new write with `record update`.                                                                                                 |
-| `duplicate`                                 | The reversal would give two records the same [strict key](records.md#fields-and-matching). `id` names the record being changed, and `existing_id` names the conflicting record. Inspect both before retrying.                                                                                                                           |
-| `deleted`                                   | A deleted record holds the key the reversal would restore. `id` names that record, and `change_id` names its deletion. Inspect the record before choosing a correction. Restoring it does not free the key.                                                                                                                             |
-| `linked`                                    | Something still uses what the reversal would remove. If active records link to a record it would delete, relink or delete them, as [Delete records](records.md#delete-records) describes. If active deals use a stage it would archive, move them to another stage. Read each record before you change it, then try the reversal again. |
+In a `duplicate` entry, `existing_id` names the record that holds the key now. A `linked` entry for a blocked deletion has `field: "record_ids"`, and its `count` and `records` work as in [Delete records](records.md#delete-records).

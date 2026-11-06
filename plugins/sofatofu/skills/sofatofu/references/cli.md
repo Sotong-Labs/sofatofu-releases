@@ -11,25 +11,25 @@ The input keys of an operation become arguments:
 - **Text and numbers** follow the flag, such as `--type company` or `--limit 200`. Quote text that contains spaces.
 - **`true`** is the flag alone, such as `--count`. Leave a flag out for `false`.
 - **A list of IDs**, such as `record_ids`, repeats the flag once for each item.
-- **An object or a list of objects**, such as `filter`, `patch` and `records`, takes one JSON value. Write it inline in single quotes, put `@` before a file path to read the value from that file, or use `@-` to read it from stdin. If the value holds a single quote, or you run in PowerShell, use `@<path>` or `@-`. A file is useful when a script builds the value, such as an import batch.
+- **Objects and lists of objects**, such as `filter` and `records`, use JSON. Enclose inline JSON in single quotes, use `@<path>` to read a file, or use `@-` to read from stdin. If the JSON contains a single quote, or if you use PowerShell, use a file or stdin instead. Files are useful for data from scripts, such as import batches.
 - Pass `read_id` as `--read-id="<read_id>"`. Use the equals sign so an ID that starts with `-` isn't parsed as a flag.
 
 For example, this call:
 
 ```text
-record update {"type":"deal","ids":["k7m2p9qx4dz1","b3n8r2wq7yt5"],"patch":{"stage":"won"},"reason":"Contracts signed","read_id":"<read_id>"}
+record update {"type":"deal","records":[{"id":"k7m2p9qx4dz1","stage":"won"},{"id":"b3n8r2wq7yt5","stage":"lost"}],"reason":"The sales review confirmed these deal outcomes","read_id":"<read_id>"}
 ```
 
 is this command:
 
 ```bash
-sofatofu record update k7m2p9qx4dz1 b3n8r2wq7yt5 --type deal --patch '{"stage":"won"}' --reason "Contracts signed" --read-id="<read_id>"
+sofatofu record update --type deal --records '[{"id":"k7m2p9qx4dz1","stage":"won"},{"id":"b3n8r2wq7yt5","stage":"lost"}]' --reason "The sales review confirmed these deal outcomes" --read-id="<read_id>"
 ```
 
 These commands show a repeated flag and a value read from a file:
 
 ```bash
-sofatofu change reverse m5n1p8q2r7s4 --record-ids c4d8e2f6g0h3 --record-ids d5e9f3g7h1j4 --reason "Restore the contacts removed by mistake" --read-id="<read_id>"
+sofatofu change reverse m5n1p8q2r7s4 --record-ids c4d8e2f6g0h3 --record-ids d5e9f3g7h1j4 --reason "Restore the contacts removed by mistake"
 sofatofu record create --type company --records @batch-03.json --reason "Import companies, batch 3 of 12" --read-id="<read_id>"
 ```
 

@@ -10,7 +10,7 @@ description: >-
   workspace settings.
 license: MIT
 metadata:
-  version: 0.7.6
+  version: 0.8.0
 ---
 
 # Sofatofu
@@ -31,7 +31,7 @@ Teams use Sofatofu to delegate work to agents without losing context, control or
 
 - **Scope.** The user's request is your scope. You act within it and don't widen it.
 - **Context.** Read the relevant records before acting, and use what you find to decide what to change.
-- **Evidence.** Every write needs a fresh read, so you can't overwrite a change you haven't seen.
+- **Evidence.** Every write except an undo needs a fresh read, so you can't overwrite a change you haven't seen.
 - **Accountability.** Every write carries a reason and lands in change history, so anyone can see what was done and why, and most changes can be undone.
 
 If you're reading this as a person, ask your agent to do the work. You can inspect its changes in change history and ask it to explain or undo them.
@@ -51,7 +51,7 @@ record search {"type":"company","filter":{"domain":"acme.example.com"},"limit":2
 
 An example line is not a shell command. [Use the CLI](references/cli.md) shows how to write each call as a command.
 
-Every list takes `limit` (1 to 200, default 10) and `offset` (default 0). To get the next page, pass the `next.offset` from the last one. An ID list or a write can hold at most 200 items.
+To get the next page of a list, pass the `next.offset` from the last one as `offset`.
 
 | Noun         | Verbs                                         | Reference                                                                               |
 | ------------ | --------------------------------------------- | --------------------------------------------------------------------------------------- |
@@ -63,7 +63,7 @@ Every list takes `limit` (1 to 200, default 10) and `offset` (default 0). To get
 | `auth`       | `whoami`                                      | [The workspace of the connection](#the-workspace-of-the-connection)                     |
 | `feedback`   | `send`                                        | [Send feedback](#send-feedback)                                                         |
 
-To move records in from another CRM or a spreadsheet, or out to a file, read [Import and export](references/import-export.md). To bring in data from mail, calendars and other tools, read [Integrations](references/integrations.md).
+To move records in from another CRM or a spreadsheet, or out to a file, read [Import and export](references/import-export.md). For a source with its own page, also read that page: [Spreadsheets and CSV files](references/import-spreadsheet.md), [HubSpot](references/import-hubspot.md), [Pipedrive](references/import-pipedrive.md), [Salesforce](references/import-salesforce.md). To bring in data from mail, calendars and other tools, read [Integrations](references/integrations.md).
 
 Read a reference file in full when you open it. They're short.
 
@@ -99,21 +99,21 @@ For summaries, comparisons, trends or charts, read [Reporting and analysis](refe
 
 When you read data you plan to change, the response includes a `read_id`. Think of it as a receipt for what you just looked at. You hand it back when you write, and Sofatofu checks that the data hasn't changed since. If someone edited a record in between, the write is refused and you read again, so you never overwrite changes you haven't seen.
 
-A receipt works once. A successful write uses it up even if the write changed nothing, so every write needs its own fresh read.
+A receipt works once. A successful write uses it up even if the write changed nothing, so every write needs its own fresh read. An undo (`change reverse`) takes no `read_id`.
 
 The loop:
 
 1. Read the data you intend to change.
 2. Check what came back and decide what to write.
-3. Write, passing the read's ID as `read_id` along with a `reason` of 1 to 280 characters saying why the change is needed. Write the reason as a plain, factual note of what changed and why. It's saved in change history, where members can read it later.
+3. Write, passing the read's ID as `read_id` along with a `reason` saying why the change is needed. Write the reason as a plain, factual note of what changed and why. It's saved in change history, where members can read it later.
 4. Check the write's result. Read again before your next write.
 
 ### An example
 
-Search by domain before creating or updating a company. Include deleted records:
+Search by domain before creating or updating a company:
 
 ```text
-record search {"type":"company","filter":{"domain":"acme.example.com"},"include":"deleted","limit":200}
+record search {"type":"company","filter":{"domain":"acme.example.com"},"limit":200}
 ```
 
 The response looks roughly like this (abridged, with illustrative values):
@@ -135,27 +135,25 @@ If `total` is 0, create the company with this search's `read_id`:
 record create {"type":"company","records":[{"name":"Acme","domain":"acme.example.com"}],"reason":"New lead from pricing call","read_id":"<read_id>"}
 ```
 
-If the company is active, update it with this search's `read_id`:
+If the company exists, update it with this search's `read_id`:
 
 ```text
-record update {"type":"company","ids":["k7m2p9qx4dz1"],"patch":{"name":"Acme Inc"},"reason":"Legal name from the pricing call","read_id":"<read_id>"}
+record update {"type":"company","records":[{"id":"k7m2p9qx4dz1","name":"Acme Inc"}],"reason":"Legal name from the pricing call","read_id":"<read_id>"}
 ```
-
-If the company has `deleted_at`, restore it instead. See [Reverse a change](references/changes.md#reverse-a-change).
 
 Replace the placeholder IDs and dates in examples with real values.
 
 ### Which read goes with which write
 
-| Write                     | Read                                                                                                                               |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| Create records            | `record search` with the filter from [The search before a create](#the-search-before-a-create)                                     |
-| Update or delete records  | `record search`, or `record get` for known IDs                                                                                     |
-| Reverse a change          | `record search` or `record get`, with `include` set to `deleted` to restore records, or `workspace get` for a configuration change |
-| Change workspace settings | `workspace get`                                                                                                                    |
-| Remove a member           | `member list`                                                                                                                      |
-| Invite someone            | `invitation list` with `email` set to the invited email                                                                            |
-| Revoke an invitation      | `invitation list`                                                                                                                  |
+| Write                     | Read                                                                                                |
+| ------------------------- | --------------------------------------------------------------------------------------------------- |
+| Create records            | `record search` with the filter from [The search before a create](#the-search-before-a-create)      |
+| Update or delete records  | `record search`, or `record get` for known IDs                                                      |
+| Reverse a change          | None. A reversal takes no `read_id`. See [Reverse a change](references/changes.md#reverse-a-change) |
+| Change workspace settings | `workspace get`                                                                                     |
+| Remove a member           | `member list`                                                                                       |
+| Invite someone            | `invitation list` with `email` set to the invited email                                             |
+| Revoke an invitation      | `invitation list`                                                                                   |
 
 A read only vouches for the records it returned. That's enough to update or delete records you've found. Creating something or inviting someone is stricter, because you also have to show the item doesn't already exist. Search from offset 0 with a filter every new item would match, and check that `total` is no bigger than `limit`, so nothing is hiding on a later page.
 
@@ -167,24 +165,24 @@ So prefer `record search` before record writes, with filters taken from the requ
 
 Search each batch once, with one [`or`](references/filters.md#any-of-several-filters) filter and `limit` set to 200. Put the filters from this table in the `or` list:
 
-| Item                                | Filter in the `or` list                                                                                                                        | What it returns                                                                                                          |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Company with a domain               | `{"domain":{"in":[...]}}`, one for the batch                                                                                                   | At most one record for each domain                                                                                       |
-| Person with an email                | `{"email":{"in":[...]}}`, one for the batch                                                                                                    | At most one record for each email                                                                                        |
-| Company with no domain              | `{"name":{"in":[...]}}`, one for the batch                                                                                                     | Loose matches                                                                                                            |
-| Person with a company and no email  | `{"name":"<name>","company":"<company id>"}`, one for each item                                                                                | Loose matches                                                                                                            |
-| Person with no email and no company | `{"name":"<name>","company":null}`, one for each item                                                                                          | People with this name and no company. None of them is a loose match. The search only gives the `read_id` for the create. |
-| Deal                                | `{"name":"<name>","company":"<company id>"}`, one for each item                                                                                | Loose matches                                                                                                            |
-| Activity                            | `{"kind":"<kind>","occurred_at":"<time>","person":"<person id>","company":null,"deal":null}`, one for each item, with `null` for an empty link | Loose matches                                                                                                            |
+| Item                                | Filter in the `or` list                                                                                                                                    | What it returns                                                                                                                  |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Company with a domain               | `{"domain":{"in":[...]}}`, one for the batch                                                                                                               | At most one record for each domain                                                                                               |
+| Person with an email                | `{"email":{"in":[...]}}`, one for the batch                                                                                                                | At most one record for each email                                                                                                |
+| Item with a source ID               | `{"source_id":{"in":[...]}}`, one for the batch                                                                                                            | At most one record for each source ID                                                                                            |
+| Company with no domain              | `{"name":{"in":[...]}}`, one for the batch                                                                                                                 | Loose matches                                                                                                                    |
+| Person with a company and no email  | `{"name":"<name>","company":"<company id>"}`, one for each item                                                                                            | Loose matches                                                                                                                    |
+| Person with no email and no company | `{"name":"<name>","company":null}`, one for each item                                                                                                      | People with this name and no company. None of them is a loose match. The search only gives the `read_id` for the create.         |
+| Deal                                | `{"name":"<name>","company":"<company id>"}`, one for each item                                                                                            | Loose matches                                                                                                                    |
+| Activity                            | `{"kind":"<kind>","occurred_at":"<time>","people":"<one of its person ids>","company":null,"deal":null}`, one for each item, with `null` for an empty link | Loose matches and other activities with different people lists. Compare the full list before treating a result as a loose match. |
 
 ```text
-record search {"type":"person","filter":{"or":[{"email":{"in":["ann@example.com"]}},{"name":"John Smith","company":"k7m2p9qx4dz1"},{"name":"Mia Chen","company":null}]},"include":"deleted","limit":200}
+record search {"type":"person","filter":{"or":[{"email":{"in":["ann@example.com"]}},{"name":"John Smith","company":"k7m2p9qx4dz1"},{"name":"Mia Chen","company":null}]},"limit":200}
 ```
 
-- Set `include` to `deleted` when the list has a domain or email filter. It applies to the whole search, so name filters also return deleted records. Those are never a [loose match](references/records.md#fields-and-matching).
-- A returned record with the domain or email of an item holds that [strict key](references/records.md#fields-and-matching). If it has `deleted_at`, restore it instead of creating the item. When no returned record has the domain or email of an item, the item has no strict match.
-- A domain or email filter does not show a loose match, such as a company with the same name. The create tells you about one with `possible_duplicate`.
-- Split the batch only when `total` is above 200. A domain or email filter returns at most one record for each item. A name filter can return many records for one item, so `total` can be more than 200 for a small batch.
+- A returned record with the domain, email, or source ID of an item holds that [strict key](references/records.md#fields-and-matching). When no returned record has the domain, email, or source ID of an item, the item has no strict match.
+- Searching by domain, email or source ID does not find records that match only by loose-match fields, such as a company's name. Creating a record can still return `possible_duplicate` for those matches.
+- Split the batch only when `total` exceeds 200. Each domain, email or source ID matches at most one record, but different keys from the same item can match different records. Name filters can also return several matches, so even a small batch can exceed 200 results.
 
 ### More than 200 targets
 
@@ -195,7 +193,7 @@ A write can cover at most 200 records, so when more than 200 match, work in batc
 - Each batch is its own change. If only some finish, report which are done and which are blocked.
 - If the reads you can make can't safely identify the whole target set, report that as a blocker. Don't guess, and don't quietly shrink the scope.
 
-For an import from a file, follow [Import and export](references/import-export.md).
+For an import, follow [Import and export](references/import-export.md).
 
 ## Reading results
 
@@ -208,20 +206,21 @@ For an import from a file, follow [Import and export](references/import-export.m
 
 ## When an operation fails
 
-A failed operation returns a JSON body `{ error, message }`, sometimes with more detail, such as `index` or `existing_id`. Start with the message and the table below before asking anyone for help. For a failed write, the table also says when to read again.
+A failed operation returns `{ error, message }`. The message tells you what to do, including whether to read again. The response may also include `errors`, a list of problems with specific items in your request. Each entry contains:
 
-| Error                                             | What it means and what to do                                                                                                                                                                                                                                                                                                                                                                         |
-| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `read_stale`                                      | The data changed after your read. Repeat the original read, review the current data, then decide whether to write again.                                                                                                                                                                                                                                                                             |
-| `read_scope`                                      | The read didn't include what this write needs. Use the matching read from the table above.                                                                                                                                                                                                                                                                                                           |
-| `read_expired`                                    | The `read_id` is missing, already used, or older than 24 hours. Read again.                                                                                                                                                                                                                                                                                                                          |
-| `write_conflict`                                  | Other writes kept the workspace busy, and this write changed nothing. Read again, then retry the write with the new `read_id`.                                                                                                                                                                                                                                                                       |
-| `apply_failed`                                    | Read the current state before trying another write, and check whether the result you wanted is already there.                                                                                                                                                                                                                                                                                        |
-| `server_busy`                                     | The server was too busy to start the request, and nothing changed. Retry the same request in a few seconds. For a write, the same `read_id` still works.                                                                                                                                                                                                                                             |
-| `invalid_input`, `duplicate`, `deleted`, `linked` | The write did not use the read. Follow the error message. If you only correct the request, retry with the same `read_id`. If you change data first, read again. See [Create records](references/records.md#create-records) and [Update records](references/records.md#update-records) for record conflicts.                                                                                          |
-| `possible_duplicate`                              | Items match existing records loosely, for example by name. The write did not use the read. Inspect the listed records. If an item is one of them, update that record instead. If the records are different, send the same write again with `force` set to `true` and the same `read_id`, and say in the `reason` why they are different. See [Create records](references/records.md#create-records). |
+- `field`: the affected field, with `*` in place of the item's position. For example, `records.*.stage` refers to the `stage` field of records in the request.
+- `message`: what went wrong.
+- `items`: the positions of the affected items, starting at `0`, in `records`, `ids`, or `record_ids`.
 
-If an operation ends without a clear result, read the current state before you try the write again.
+For example, `field: "records.*.stage"` with `items: [0, 2]` identifies a problem with the first and third records.
+
+Problems with the same field and message share an entry, unless they include details specific to one item. If the response also reports a problem outside the item list, such as a missing `reason`, that entry has `items: []`.
+
+Reversal rule errors use record IDs in `items` instead of positions. Their `field` names the affected record field, or `record_ids` when the rule involves several fields.
+
+Fix every reported problem before you retry. Later checks may report more problems.
+
+If an operation ends without a clear result, read the current state and check whether the result you wanted already exists before you try the write again.
 
 ## Send feedback
 
