@@ -109,14 +109,17 @@ The `people` filter finds activities linked to any of the given people, includin
 
 Put custom filters under `fields`, keyed by the active field name. Every custom field accepts null with `equals`.
 
-| Field type           | Operators                              | Value type                                                                                                  |
-| -------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `text`               | `equals`, `in`, `not_in`, `contains`   | Text of 1 to 255 characters with no hidden or direction-control character, NUL, or half of a character pair |
-| `number`, `currency` | `equals`, `in`, `not_in`, `gte`, `lte` | Number                                                                                                      |
-| `date`               | `equals`, `in`, `not_in`, `gte`, `lte` | Date, such as `2026-10-31`                                                                                  |
-| `checkbox`           | `equals`, `in`, `not_in`               | `true` or `false`                                                                                           |
-| `select`             | `equals`, `in`, `not_in`               | Option name                                                                                                 |
-| `multi_select`       | `equals`, `in`, `not_in`               | Option name                                                                                                 |
+| Field type           | Operators                              | Value type                                                                                                    |
+| -------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `text`               | `equals`, `in`, `not_in`, `contains`   | Text of 1 to 255 characters with no hidden or direction-control character, NUL, or half of a character pair   |
+| `long_text`          | `equals`, `in`, `not_in`               | Text of 1 to 10000 characters with no hidden or direction-control character, NUL, or half of a character pair |
+| `number`, `currency` | `equals`, `in`, `not_in`, `gte`, `lte` | Number                                                                                                        |
+| `date`               | `equals`, `in`, `not_in`, `gte`, `lte` | Date, such as `2026-10-31`                                                                                    |
+| `checkbox`           | `equals`, `in`, `not_in`               | `true` or `false`                                                                                             |
+| `select`             | `equals`, `in`, `not_in`               | Option name                                                                                                   |
+| `multi_select`       | `equals`, `in`, `not_in`               | Option name                                                                                                   |
+
+A `long_text` filter compares the full value in lower case, after it trims the start and end and changes each run of whitespace to one space. It does not accept `contains`.
 
 A `multi_select` filter compares each option on its own. `equals` and `in` find records that hold at least one of the given options, also when they hold other options. `not_in` finds records that hold none of them.
 

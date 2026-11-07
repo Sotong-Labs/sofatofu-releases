@@ -37,6 +37,8 @@ member invite {"email":"colleague@example.com","reason":"Give the new sales coll
 
 The invite adds the person with the `member` role. The result has the invitation's ID in `ids`, plus `delivery` details.
 
+Tell the user that on a paid plan the person takes a billed seat when they accept.
+
 Check `delivery.sent`. If email delivery failed, the invitation still exists. Include `delivery.link` in your task result and say that the invitation exists but the email didn't send. See [Talking to the user](../SKILL.md#talking-to-the-user). Don't create another invitation, and don't wait for a reply.
 
 An invitation can be accepted for 48 hours. The invited person has to sign in with the invited email address and accept it in the browser. Once it expires, you can invite the person again.

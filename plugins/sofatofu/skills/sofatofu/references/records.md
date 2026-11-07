@@ -63,7 +63,7 @@ record search {"type":"deal","filter":{"company":"h6j3k8l2m9n4","stage":"in_prog
 record update {"type":"deal","records":[{"id":"k7m2p9qx4dz1","stage":"won","owner":null},{"id":"b3n8r2wq7yt5","value":12000,"fields":{"Priority":"high"}}],"reason":"The sales review confirmed the win and revised estimate","read_id":"<read_id>"}
 ```
 
-The result returns `effect.updated`, the number of records updated. Every update is recorded as a change, even when no value changes, so don't repeat an update to check that it worked.
+The result returns `effect.updated`, the number of records with at least one changed value. Sofatofu skips each record whose values all equal the stored values. If no values change, the update returns no `change_id` and does not affect whether you can undo earlier changes.
 
 For custom fields, include the names and values you want to change in `fields`. Other custom values stay unchanged, including values in archived fields. An empty list also clears a multi-select field.
 
@@ -125,14 +125,14 @@ Every type also accepts `fields`, a JSON object whose keys are active field name
 - **Stage.** Pass an active stage name from `workspace get`. A new deal without a `stage` gets the first active stage.
 - **Value.** Pass a JSON number of 0 or more, such as `1200.5`. Unrealistically large values lose exactness. Value filters take the same format. Set the workspace currency before you write a deal value.
 - **Dates.** Use `YYYY-MM-DD` for `expected_close_date`. Use an ISO 8601 date-time such as `2026-09-22T10:00:00Z` for `occurred_at`, ending in `Z` or an offset. A date-time with no offset, a bare date, or a phrase like `tomorrow` is rejected.
-- **Domain and email.** Send a `domain` as a bare name such as `acme.example.com`, with no `https://`, port or trailing dot. Send an `email` as a plain address such as `ann@example.com`.
+- **Domain and email.** Send a `domain` as a bare name such as `acme.example.com`, with no `https://`, port, path, query, fragment, or trailing dot. Send an `email` as a plain address such as `ann@example.com`.
 - **Phone.** Send a `phone` in any format, such as `+1 (555) 010-2030 ext. 4`. Sofatofu stores it as sent, after the [text rules](#edge-cases-and-formatting-details), and does not check its format. A phone is not a strict key or a loose-match field, so people can share one.
 - **Source ID.** Use the record's ID from its source system, prefixed with the source name: `<source>:<id>`, for example `hubspot:123`. A company and a person can share a source ID. Source IDs are case-sensitive, so `Hubspot:1` and `hubspot:1` are different values.
 
 ## Edge cases and formatting details
 
-- **Text.** Text keeps its case. Sofatofu trims leading and trailing whitespace and replaces each run of whitespace, including tabs and newlines, with one space. Activity bodies lose their line breaks. Text matching ignores case except for `source_id`.
-- **Length limits.** A `name`, `stage`, `subject`, `phone`, `job_title`, `source_id` or custom text value holds 1 to 255 characters. A `body` holds 1 to 4000. Emoji are fine.
+- **Text.** Text keeps its case. Sofatofu trims leading and trailing whitespace. An activity `body` and a `long_text` field value keep their line breaks, tabs and indentation, and each `\r\n` or `\r` line ending becomes `\n`. Other text replaces each run of whitespace, including tabs and newlines, with one space. Text matching ignores case except for `source_id`. A `body` or `long_text` filter also trims the start and end and treats each run of whitespace as one space.
+- **Length limits.** A `name`, `stage`, `subject`, `phone`, `job_title`, `source_id` or custom `text` value holds 1 to 255 characters. A `body` or `long_text` value holds 1 to 10000 characters. Both limits count the stored text, after NFC and the whitespace rules above. Emoji are fine.
 - **Hidden characters.** Text with a hidden or direction-control character, such as U+200B or U+202E, returns `invalid_input`. So does NUL (U+0000) or half of a character pair anywhere in a request. The error names the field and any hidden character.
 - **Email case.** Reads return an email in lowercase.
 - **Leading `www.`.** Reads return a domain with its leading `www.`. Sofatofu ignores one leading `www.` only to compare domains, and only when two or more labels remain, so `www.com` matches only `www.com`.

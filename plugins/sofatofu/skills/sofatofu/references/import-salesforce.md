@@ -34,17 +34,17 @@ A person account has `IsPersonAccount = true` and a related contact in `PersonCo
 
 ## Map to Sofatofu
 
-Use [Data with no field of its own](import-export.md#data-with-no-field-of-its-own) for the common mappings. Salesforce custom fields end in `__c`. Read their types from the describe, not their names. A picklist maps to `select`, and a multi-select picklist maps to `multi_select`. Query address parts such as `BillingStreet` and `BillingCity`, not the compound `BillingAddress`, for Bulk API exports.
+Use [Data with no field of its own](import-export.md#data-with-no-field-of-its-own) for the common mappings. Salesforce custom fields end in `__c`. Read their types from the describe, not their names. A picklist maps to `select`, a multi-select picklist maps to `multi_select`, and a long text area maps to `long_text`. Query address parts such as `BillingStreet` and `BillingCity`, not the compound `BillingAddress`, for Bulk API exports.
 
 ### Company
 
-| Salesforce value                                                                                                    | Sofatofu field or use                                                       |
-| ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| Business `Account.Name`                                                                                             | `name`                                                                      |
-| `Account.Website`                                                                                                   | `domain`, using only the host                                               |
-| `Industry`, `Type`, `NumberOfEmployees`, `AnnualRevenue`, `AccountSource`, `Rating`, `Phone`, billing address parts | Custom fields                                                               |
-| `OwnerId`                                                                                                           | Resolve through `User` for a custom field. A company has no built-in owner. |
-| `Description`                                                                                                       | Custom text, or a note activity when it does not fit                        |
+| Salesforce value                                                                                                    | Sofatofu field or use                                                                                                                             |
+| ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Business `Account.Name`                                                                                             | `name`                                                                                                                                            |
+| `Account.Website`                                                                                                   | `domain`, using only the host                                                                                                                     |
+| `Industry`, `Type`, `NumberOfEmployees`, `AnnualRevenue`, `AccountSource`, `Rating`, `Phone`, billing address parts | Custom fields                                                                                                                                     |
+| `OwnerId`                                                                                                           | Resolve through `User` for a custom field. A company has no built-in owner.                                                                       |
+| `Description`                                                                                                       | A `long_text` custom field. For a value over 10000 characters, follow the [multi-line text rule](import-export.md#data-with-no-field-of-its-own). |
 
 ### Person
 
@@ -62,17 +62,17 @@ Check `IsConverted`. When it is `true`, import the contact in `ConvertedContactI
 
 ### Deal
 
-| Salesforce value                                                              | Sofatofu field or use                                                                                                        |
-| ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `Opportunity.Name`                                                            | `name`                                                                                                                       |
-| `AccountId`                                                                   | `company`                                                                                                                    |
-| `StageName`                                                                   | `stage`, using `OpportunityStage` to identify its meaning                                                                    |
-| `Amount`                                                                      | `value`, only when the record's currency matches the workspace currency                                                      |
-| `CloseDate`                                                                   | For open opportunities (`IsClosed = false`), `expected_close_date`. For closed ones, a custom date field for the close date. |
-| `OwnerId`                                                                     | `owner`: look up the `User` by `Id` and match its `Email` to a member. The Salesforce user can be inactive.                  |
-| `Probability`, `Type`, `LeadSource`, `ForecastCategoryName`, record type name | Custom fields                                                                                                                |
-| `OpportunityLineItem`                                                         | Product rows for the deal's note: `Name`, `Quantity`, `UnitPrice`, `TotalPrice`. Do not add their total to `Amount`.         |
-| `Description`                                                                 | Custom text, or a note activity                                                                                              |
+| Salesforce value                                                              | Sofatofu field or use                                                                                                                             |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Opportunity.Name`                                                            | `name`                                                                                                                                            |
+| `AccountId`                                                                   | `company`                                                                                                                                         |
+| `StageName`                                                                   | `stage`, using `OpportunityStage` to identify its meaning                                                                                         |
+| `Amount`                                                                      | `value`, only when the record's currency matches the workspace currency                                                                           |
+| `CloseDate`                                                                   | For open opportunities (`IsClosed = false`), `expected_close_date`. For closed ones, a custom date field for the close date.                      |
+| `OwnerId`                                                                     | `owner`: look up the `User` by `Id` and match its `Email` to a member. The Salesforce user can be inactive.                                       |
+| `Probability`, `Type`, `LeadSource`, `ForecastCategoryName`, record type name | Custom fields                                                                                                                                     |
+| `OpportunityLineItem`                                                         | Product rows for the deal's note: `Name`, `Quantity`, `UnitPrice`, `TotalPrice`. Do not add their total to `Amount`.                              |
+| `Description`                                                                 | A `long_text` custom field. For a value over 10000 characters, follow the [multi-line text rule](import-export.md#data-with-no-field-of-its-own). |
 
 `OpportunityStage` gives `IsActive`, `IsClosed`, `IsWon` and `SortOrder`. More than one stage can mean won or closed. Use these flags rather than guesses from stage names. `RecordType.BusinessProcessId` identifies the sales process, which restricts the available stages. Picklist API values can differ from displayed labels.
 
@@ -118,7 +118,7 @@ Salesforce IDs are unique within an org, across these objects. A sandbox or anot
 
 A new company built from one lead comes from that lead under the derived-record rule in [Source IDs](import-export.md#source-ids). A new company that several leads describe has no single source record, so omit `source_id`, as [Source IDs for spreadsheets](import-spreadsheet.md#source-ids) describes.
 
-A description note comes from its account or opportunity. A line-item note comes from its opportunity. Give each a source ID under the derived-record rule in [Source IDs](import-export.md#source-ids).
+A line-item note comes from its opportunity. Give it a source ID under the derived-record rule in [Source IDs](import-export.md#source-ids).
 
 ## Data without a direct mapping
 

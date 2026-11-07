@@ -18,7 +18,7 @@ Pass the `read_id` from `workspace get` to `workspace configure`. Each call take
 
 Any configuration change makes an earlier configuration read stale. Each example below is a separate write with its own `read_id`.
 
-Creating a stage or field returns its new ID in `ids`. An update returns only `change_id` and `effect`.
+Creating a stage or field returns its new ID in `ids`. An update returns `effect` and includes `change_id` only when a value changes. If no values change, it returns `{"effect":{"updated":0}}` and does not affect whether you can undo earlier changes.
 
 When you report a change, say what changed.
 
@@ -72,7 +72,7 @@ What to know about stages:
 
 ## Create or change a custom field
 
-Pass `field` a JSON object. To create a field, leave out `id` and supply `record_type`, `name` and `type`. The types are `text`, `number`, `currency`, `date`, `checkbox`, `select` and `multi_select`. A `select` field holds one option, and a `multi_select` field holds a list of options, such as tags.
+Pass `field` a JSON object. To create a field, leave out `id` and supply `record_type`, `name` and `type`. The types are `text`, `long_text`, `number`, `currency`, `date`, `checkbox`, `select` and `multi_select`. A `long_text` field holds text that keeps its line breaks, such as notes. A `select` field holds one option, and a `multi_select` field holds a list of options, such as tags.
 
 Create a select field with three options:
 

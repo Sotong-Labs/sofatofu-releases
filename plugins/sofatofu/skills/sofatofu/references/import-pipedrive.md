@@ -107,18 +107,19 @@ An overdue activity with `done: false` does not prove that the event happened. A
 
 In v2, values are in `custom_fields` under field codes. Field definitions give each code's `field_name`, `field_type` and options. Leads inherit deal custom fields, but use the v1 response shape. Inspect that shape rather than applying the v2 parser to it.
 
-| Pipedrive `field_type`                     | Sofatofu custom field                                                                               |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------------- |
-| `varchar`, `varchar_auto`, `phone`, `text` | `text`. Check large text values against the Sofatofu text limit.                                    |
-| `double`                                   | `number`                                                                                            |
-| `monetary`                                 | `currency`. The v2 value contains both `value` and `currency`, so group by currency before mapping. |
-| `enum`                                     | `select`, with the option label                                                                     |
-| `set`                                      | `multi_select`, with the option labels                                                              |
-| `date`                                     | `date`                                                                                              |
-| `daterange`                                | Two `date` fields from `value` and `until`                                                          |
-| `time`, `timerange`                        | `text` with the time or range and its `timezone_name`, when present                                 |
-| `address`                                  | `text` from `formatted_address` or `value`                                                          |
-| `user`, `org`, `people`                    | `text` with the linked item's name, not a record link                                               |
+| Pipedrive `field_type`             | Sofatofu custom field                                                                               |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `varchar`, `varchar_auto`, `phone` | `text`                                                                                              |
+| `text`                             | `long_text`                                                                                         |
+| `double`                           | `number`                                                                                            |
+| `monetary`                         | `currency`. The v2 value contains both `value` and `currency`, so group by currency before mapping. |
+| `enum`                             | `select`, with the option label                                                                     |
+| `set`                              | `multi_select`, with the option labels                                                              |
+| `date`                             | `date`                                                                                              |
+| `daterange`                        | Two `date` fields from `value` and `until`                                                          |
+| `time`, `timerange`                | `text` with the time or range and its `timezone_name`, when present                                 |
+| `address`                          | `text` from `formatted_address` or `value`                                                          |
+| `user`, `org`, `people`            | `text` with the linked item's name, not a record link                                               |
 
 For organizations, people and deals, `include_option_labels=true` resolves custom option IDs. `include_labels=true` adds label names next to `label_ids`. Otherwise resolve IDs through the field definitions. A Pipedrive custom currency is not necessarily an ISO 4217 code. Check it before mapping to a currency field.
 

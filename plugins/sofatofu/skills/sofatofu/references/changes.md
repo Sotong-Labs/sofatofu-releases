@@ -1,6 +1,6 @@
 # Change history and reversal
 
-Every write is recorded as a change. Change history tells you who made a change, when, and why, and it lets you undo most changes.
+Sofatofu records each write that changes a value as a change. A write that changes nothing records no change and returns no `change_id`. Change history tells you who made a change, when, and why, and it lets you undo most changes.
 
 Every member can read change history. Change reads have no `read_id`.
 
@@ -43,7 +43,7 @@ Operation names include:
 change get {"id":"m5n1p8q2r7s4","limit":100,"offset":0}
 ```
 
-`change get` returns the change's details and the items it affected under `records.items`. Use `records.next.offset` to read another page. Each item has its `type`, `id` and `reversible`, plus `before` and `after` values when they exist. `reversible` tells you whether you can undo that record now. A creation has no `before`, and a record deletion has no `after`. A `member` item uses the user ID as its `id`.
+`change get` returns the change's details and the items it affected under `records.items`. Use `records.next.offset` to read another page. Each item has its `type`, `id` and `reversible`, plus `before` and `after` values when they exist. `reversible` tells you whether you can undo that record now. A creation has no `before`, and a record deletion has no `after`. For an update, `before` is the whole record and `after` holds only the values that changed. A `member` item uses the user ID as its `id`.
 
 `author.id` is the user ID of whoever made the change. It matches the member `id` in `member list` and `user.id` in `auth whoami`. `author.name` is that user's current name, even after they've left the workspace.
 
