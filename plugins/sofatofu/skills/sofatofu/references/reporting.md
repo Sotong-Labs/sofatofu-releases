@@ -49,9 +49,9 @@ Use metric definitions from the request or established workspace context. If an 
 
 Calculate over the full matching set, not just the first page:
 
-- Check `total` and follow `next.offset` while more results remain. `items.length` counts only the returned page.
+- Check `total` and follow `next.cursor` while more results remain. `items.length` counts only the returned page.
 - If only a count is needed, use `record search` with `count` set to `true`. Counts don't provide the values needed for sums or averages.
-- Separate reads return current data, not a shared snapshot. If records change during collection, reconcile the results or disclose the inconsistency. Deduplication alone doesn't prove that no records were missed.
+- If the number of items collected differs from the last page's `total`, search again or report the difference.
 - If you can't retrieve the complete set, label the analysis as partial and state what is missing. Don't extrapolate a partial sum, average or rate to the whole dataset.
 
 ## Respect what the data can establish

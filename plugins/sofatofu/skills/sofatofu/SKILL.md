@@ -10,7 +10,7 @@ description: >-
   workspace settings.
 license: MIT
 metadata:
-  version: 0.8.1
+  version: 0.9.0
 ---
 
 # Sofatofu
@@ -51,7 +51,7 @@ record search {"type":"company","filter":{"domain":"acme.example.com"},"limit":2
 
 An example line is not a shell command. [Use the CLI](references/cli.md) shows how to write each call as a command.
 
-To get the next page of a list, pass the `next.offset` from the last one as `offset`.
+To get the next page of a list or search, pass the `next.cursor` from the last page as `cursor`. For `change get`, pass `records.next.cursor`. Each page reads current data, so an item created or removed during a walk can be missing.
 
 | Noun         | Verbs                                         | Reference                                                                               |
 | ------------ | --------------------------------------------- | --------------------------------------------------------------------------------------- |
@@ -162,7 +162,7 @@ Replace the placeholder IDs and dates in examples with real values.
 | Invite someone            | `invitation list` with `email` set to the invited email                                             |
 | Revoke an invitation      | `invitation list`                                                                                   |
 
-A read only vouches for the records it returned. That's enough to update or delete records you've found. Creating something or inviting someone is stricter, because you also have to show the item doesn't already exist. Search from offset 0 with a filter every new item would match, and check that `total` is no bigger than `limit`, so nothing is hiding on a later page.
+A read only vouches for the records it returned. That's enough to update or delete records you've found. Creating something or inviting someone is stricter, because you also have to show the item doesn't already exist. Omit `cursor` to read the first page, with a filter every new item would match, and check that `total` is no bigger than `limit`, so nothing is hiding on a later page.
 
 A `record get` can't do that job. It re-checks records you already know about. It can't show that a record is missing, and it can't show that you've seen every match for a condition.
 

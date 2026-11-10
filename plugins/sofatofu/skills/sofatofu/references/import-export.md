@@ -104,6 +104,6 @@ Did anything go wrong, or not come in? Let us know with `feedback send`.
 
 ## Export records
 
-Page through `record search` with `limit` set to 200, following `next.offset` until there's no `next`, and write each page to a JSONL or CSV file. Pass the user's filter if they want only part of the data.
+Page through `record search` with `limit` set to 200, following `next.cursor` until there's no `next`, and write each page to a JSONL or CSV file. Pass the user's filter if they want only part of the data.
 
-Each page is a separate read, so records can change while the export runs. Check that the number of rows written matches the last page's `total`, and tell the user when the export ran. Give them the file path and the row count rather than the rows themselves. If you can't write a file, say so. Give the rows in your reply only when the set is small.
+Compare the number of rows written with the last page's `total`. If they differ, search again to check for records created or removed during the export, and report the difference. Tell the user when the export ran. Give them the file path and the row count rather than the rows themselves. If you can't write a file, say so. Give the rows in your reply only when the set is small.

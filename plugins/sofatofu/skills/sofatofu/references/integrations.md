@@ -19,7 +19,7 @@ If the user wants this to happen regularly, use your harness's scheduler. Each r
 
 ## Find what changed
 
-To see what changed in Sofatofu since you last checked, use `change list` with `since` set to the time of the last check, and follow `next.offset` until there's no `next`. [Find a change](changes.md#find-a-change) lists the other filters.
+To see what changed in Sofatofu since you last checked, use `change list` with `since` set to the time of the last check, and follow `next.cursor` until there's no `next`. [Find a change](changes.md#find-a-change) lists the other filters.
 
 ## What Sofatofu doesn't offer
 

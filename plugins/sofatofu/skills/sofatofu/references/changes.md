@@ -20,7 +20,7 @@ Or find deal creations, updates and deletions during a period (not reversals):
 change list {"since":"2026-09-01T00:00:00Z","until":"2026-09-30T23:59:59Z","operation":"record.deal","limit":100}
 ```
 
-All filters are optional, and a change must match every one you pass. Results list the newest changes first. Each item has an `id`, `at`, `author`, `reason`, `operation` and `reversibility`. [Reverse a change](#reverse-a-change) explains its values.
+All filters are optional, and a change must match every filter you send. Results list the newest changes first. To read the next page, repeat the same list with `cursor` set to `next.cursor`. Each item has an `id`, `at`, `author`, `reason`, `operation` and `reversibility`. [Reverse a change](#reverse-a-change) explains its values.
 
 | Key                           | Use                                                                                                                                                                                                                                           |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -40,10 +40,10 @@ Operation names include:
 ## Inspect changed values
 
 ```text
-change get {"id":"m5n1p8q2r7s4","limit":100,"offset":0}
+change get {"id":"m5n1p8q2r7s4","limit":100}
 ```
 
-`change get` returns the change's details and the items it affected under `records.items`. Use `records.next.offset` to read another page. Each item has its `type`, `id` and `reversible`, plus `before` and `after` values when they exist. `reversible` tells you whether you can undo that record now. A creation has no `before`, and a record deletion has no `after`. For an update, `before` is the whole record and `after` holds only the values that changed. A `member` item uses the user ID as its `id`.
+`change get` returns the change's details and the items it affected under `records.items`. To read the next page, repeat the same call with `cursor` set to `records.next.cursor`. Each item has its `type`, `id` and `reversible`, plus `before` and `after` values when they exist. `reversible` tells you whether you can undo that record now. A creation has no `before`, and a record deletion has no `after`. For an update, `before` is the whole record and `after` holds only the values that changed. A `member` item uses the user ID as its `id`.
 
 `author.id` is the user ID of whoever made the change. It matches the member `id` in `member list` and `user.id` in `auth whoami`. `author.name` is that user's current name, even after they've left the workspace.
 
@@ -59,7 +59,7 @@ Inspect the change first and check `reversibility`:
 - `some`: you can undo only some records. Run `change get` and pass the items with `reversible: true` in `record_ids`.
 - `none`: you can't undo any record. The kind of change can't be undone, or later changes touched every record. Member access changes and workspace creation can't be undone.
 
-`all` and `reversible: true` mean that no later change has touched the records. The undo is still a write, so it can fail like any write. For example, undoing a domain change fails as `duplicate` if another company has taken the old domain since. Undoing a creation fails as `linked` while other records link to the new record. The error tells you what to fix. An undo or a restore checks no [loose match](records.md#fields-and-matching), so it can give back a name that another record now holds.
+`all` and `reversible: true` mean that no later change has touched the records. The undo is still a write, so it can fail like any write. For example, undoing a domain change fails as `duplicate` if another company has taken the old domain since. Undoing a creation fails as `linked` while other records link to the new record. Undoing a stage move fails as `reversal_conflict` when another stage now holds the old place. The error tells you what to fix. An undo or a restore checks no [loose match](records.md#fields-and-matching), so it can give back a name that another record now holds.
 
 You can undo only the latest change to a record. For example, change 1 renames Acme, and change 2 sets its phone. You can't undo change 1.
 

@@ -10,7 +10,7 @@ workspace get {}
 
 `workspace get` returns the workspace `name`, your `role`, the deal `currency`, and every stage and field in the `stages` and `fields` arrays. `currency` is `null` until an owner sets one. The arrays are always complete, because this operation has no list limits.
 
-Each stage item has `id`, `name`, `position` and `archived`. Each field item has `id`, `record_type`, `name`, `type`, `currency`, `options` and `archived`. Items also carry their creation and update times, and a `change_id` while that change is still in history.
+Each stage item has `id`, `name`, `position` and `archived`. `position` is the index of the stage among all stages from 0, archived stages included, so the first stage has position 0. Each field item has `id`, `record_type`, `name`, `type`, `currency`, `options` and `archived`. Items also carry their creation and update times, and a `change_id` while that change is still in history.
 
 ## Change one setting
 
@@ -44,7 +44,7 @@ Only an owner can rename the workspace. The change history records the rename, a
 
 Pass `stage` a JSON object. To create a stage, give it a `name` and leave out `id`. To update one, pass its `id` from `workspace get` along with the fields to change.
 
-Create a stage at position 1:
+Create a stage at position 1, between the first and the second stage:
 
 ```text
 workspace configure {"stage":{"name":"qualified","position":1},"reason":"Separate qualified leads from new enquiries","read_id":"<read_id>"}
@@ -56,6 +56,12 @@ Rename a stage:
 workspace configure {"stage":{"id":"s2t6u0v4w8x1","name":"negotiation"},"reason":"Match the sales team's stage name","read_id":"<read_id>"}
 ```
 
+Move a stage to the start:
+
+```text
+workspace configure {"stage":{"id":"s2t6u0v4w8x1","position":0},"reason":"Show new enquiries first","read_id":"<read_id>"}
+```
+
 Archive a stage:
 
 ```text
@@ -65,10 +71,12 @@ workspace configure {"stage":{"id":"s2t6u0v4w8x1","archived":true},"reason":"Sto
 What to know about stages:
 
 - Names hold 1 to 255 characters and must be unique, archived names included. Comparison ignores case and extra whitespace.
-- `position` is an integer starting at 0. A new stage with no position goes last.
+- A create or a move with `position` puts the stage at that index. The other stages keep their order, and only the named stage changes, so the change has one record. A position past the end puts the stage last, and a new stage with no position goes last. A move to the current position of the stage changes nothing.
+- The first active stage is the stage of a new deal that names no stage.
 - Deal operations use stage names, not stage IDs. Deal writes accept only active stages. Stage filters also accept archived stages.
 - Archived stages stay in `workspace get`. Set `archived` to `false` to make one active again.
-- Reversing a stage's creation archives the stage, and it keeps its name.
+- Reversing a stage's creation archives the stage, and it keeps its name and its place in the order.
+- Reversing a move puts the stage back in its old place. If another stage now holds that place, the reversal fails with `reversal_conflict`. Move the stage again with a new change.
 
 ## Create or change a custom field
 

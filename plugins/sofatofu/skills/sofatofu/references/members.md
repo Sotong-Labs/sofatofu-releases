@@ -15,6 +15,8 @@ invitation list {"limit":100}
 
 `member list` returns active members, and `invitation list` returns pending invitations. Set `email` in `invitation list` to see only the pending invitations for one address. The match ignores case and surrounding spaces.
 
+`member list` orders members by when they joined the workspace, oldest first. `invitation list` orders invitations by when they were created, oldest first. To read the next page, repeat the same list with `cursor` set to `next.cursor`.
+
 Each member has an `id`, `name`, `email` and `role`. The `id` is their user ID. Use it as the `owner` when creating or updating a deal, or as the `author` filter in `change list`.
 
 An invitation item has `id`, `email`, `role`, `expires_at` and `invitation_link`.

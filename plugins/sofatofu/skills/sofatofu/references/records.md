@@ -11,10 +11,10 @@ Use `company` and `deal` to link related records, such as a deal and its company
 ## Find records
 
 ```text
-record search {"type":"person","filter":{"company":"k7m2p9qx4dz1"},"limit":200,"offset":0}
+record search {"type":"person","filter":{"company":"k7m2p9qx4dz1"},"limit":200}
 ```
 
-Matches come back in `items`, most recently updated first. For the filter syntax, see [Filters and pipeline queries](filters.md). Each page has its own `read_id` and reads current data. To get the next page, repeat the same search with `offset` set to `next.offset`. A write based on a search needs every target on one page, so set `limit` to 200 when you search before a write.
+By default, `items` lists the matches newest first by `created_at`. For the filter syntax, see [Filters and pipeline queries](filters.md). To read the next page, repeat the same search with `cursor` set to `next.cursor`. A write based on a search needs every target on one page, so set `limit` to 200 when you search before a write.
 
 To get just the number of matches, set `count` to `true`. Counts have no limit.
 
@@ -24,7 +24,7 @@ An activity is one entry in a record's history. To read a record's history with 
 record search {"type":"activity","filter":{"deal":"k7m2p9qx4dz1","occurred_at":{"gte":"2026-09-01T00:00:00Z","lte":"2026-09-30T23:59:59Z"}},"order_by":"occurred_at","limit":200}
 ```
 
-If a record has more than 200 activities, narrow the `occurred_at` range.
+If a record has more than 200 activities, narrow the `occurred_at` range. A write that changes `occurred_at` during this walk can make an activity missing or repeated.
 
 ## Read records by ID
 
