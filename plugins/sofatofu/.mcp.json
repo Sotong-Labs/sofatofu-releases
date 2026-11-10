@@ -2,12 +2,7 @@
   "mcpServers": {
     "sofatofu": {
       "type": "http",
-      "url": "https://sofatofu.com/mcp",
-      "extensions": {
-        "com.openai": {
-          "auth": { "type": "oauth", "client": { "mode": "cimd" } }
-        }
-      }
+      "url": "https://sofatofu.com/mcp"
     }
   }
 }

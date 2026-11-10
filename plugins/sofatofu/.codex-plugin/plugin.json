@@ -1,6 +1,6 @@
 {
   "name": "sofatofu",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Let your agent keep your CRM up to date. Ask it to find contacts, log calls, and update deals in sofatofu. See what changed and why, and undo most changes.",
   "author": {
     "name": "Sam Kah Man",
@@ -91,7 +91,7 @@
         }
       },
       "publication": {
-        "release_notes": "### 🔧 Everyday improvements\n\n- `record search` lists newest records first by `created_at`. Cursor paging and this default order keep edits between pages from moving records across page boundaries. Each page reads current data, not a fixed snapshot.\n- Creating or moving a stage puts it at the requested `position`, or last if that position is past the end. Positions start at 0 and include archived stages. Other stages keep their order.\n\n### ⚠️ Before you upgrade\n\n- Run `sofatofu update` to update the CLI and its installed skill copies. If you use the skill without the CLI, update that skill.\n- Replace `offset` with `cursor` (`--offset` with `--cursor` in the CLI) for `record search`, `change list`, `change get`, `member list`, and `invitation list`. Omit `cursor` on the first page. For each next page, copy `next.cursor` unchanged and keep the same filters and sort order. For `change get`, use `records.next.cursor`.\n- Replace `order_by: \"updated_at\"` with `order_by: \"created_at\"`, or omit `order_by` for the default. Activities still support `occurred_at`, but edits to that value can cause missing or repeated activities between pages.\n- If a write based on a record search returns `read_expired`, repeat the search and check its result before retrying with the new `read_id`.\n- You cannot undo stage changes made before the server's stage-order migration. An undo returns `reversal_expired`. Read the stages with `workspace get`, then make a new change."
+        "release_notes": "### 🔧 Everyday improvements\n\n- Marketplace MCP settings omit the OpenAI-only authentication extension that Anthropic's directory policy rejects. `sofatofu-plugin.zip` keeps the OpenAI OAuth settings."
       }
     }
   }

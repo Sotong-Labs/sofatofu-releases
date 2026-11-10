@@ -10,7 +10,7 @@ description: >-
   workspace settings.
 license: MIT
 metadata:
-  version: 0.9.0
+  version: 0.9.1
 ---
 
 # Sofatofu
