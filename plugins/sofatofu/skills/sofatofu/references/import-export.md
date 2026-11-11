@@ -28,8 +28,8 @@ Give every imported record a `source_id`. It links records to each other and let
 
 1. **Access.** Read the source with your own tools, or ask the user for an export. Sofatofu never connects to another CRM.
 2. **Scope.** By default, import all companies and people, open deals, deals closed in the last 12 months, and activities from the last 12 months. Count the rows for this default and for the full data, so the user can choose.
-3. **Map.** Run `workspace get` and `member list` to see the stages, custom fields, currency and members. Map each source column to an existing field from [Fields and matching](records.md#fields-and-matching) or a new custom field, converting values as needed. List any columns you will leave out and explain why. Match each source stage to a workspace stage and each source owner to a member. The [table below](#data-with-no-field-of-its-own) covers the usual cases.
-4. **Questions.** Ask the user one batch of questions. Include the two scope counts, the source ID form, each loss of data, each stage, owner or currency with no match, and each new custom field.
+3. **Map.** Run `workspace get` and `member list` to see the stages, custom fields, currency and members. Compare source columns with the built-in fields in [Fields and matching](records.md#fields-and-matching) and the custom fields from `workspace get`. Check only custom fields for the same `record_type` with `archived: false`. Reuse an existing field when it holds the same kind of value and its type fits, even if its name differs. Create a custom field only when no existing field fits. Convert values as needed. List any columns you will leave out and explain why. Match each source stage to a workspace stage and each source owner to a member. The [table below](#data-with-no-field-of-its-own) covers the usual cases.
+4. **Questions.** Ask the user one batch of questions. Include the two scope counts, the source ID form, each loss of data, and each stage, owner or currency with no match. Include each existing field you will use and each new custom field you propose.
 5. **Setup.** Before you import any records, have an owner add the missing stages, fields and currency, as [Workspace configuration](workspace.md) shows.
 
 Then clean the rows:
@@ -56,7 +56,7 @@ record create {"type":"company","records":[{"name":"Acme","domain":"acme.example
 
 Send batches one at a time. Batches sent in parallel to the same workspace wait on each other and can fail with `write_conflict`.
 
-A batch writes all its rows or none. After a refused batch, fix the rows and send it again. After a failure partway through an import or an unclear result, run the batch step again: its search by source ID shows which rows came in. A row with no strict key, such as a deal with no source ID, can't be matched reliably, so use the saved `ids` for it and don't send it again. When a fix also changes rows that earlier batches wrote, such as a wrong column map, undo the import, fix the map, and run it again.
+A batch writes all its rows or none. After a refused batch, fix the rows and send it again. After `read_stale`, follow [When an operation fails](../SKILL.md#when-an-operation-fails). After a failure partway through an import or an unclear result, run the batch step again: its search by source ID shows which rows came in. A row with no strict key, such as a deal with no source ID, can't be matched reliably, so use the saved `ids` for it and don't send it again. When a fix also changes rows that earlier batches wrote, such as a wrong column map, undo the import, fix the map, and run it again.
 
 ## Run the import again
 

@@ -10,13 +10,13 @@ workspace get {}
 
 `workspace get` returns the workspace `name`, your `role`, the deal `currency`, and every stage and field in the `stages` and `fields` arrays. `currency` is `null` until an owner sets one. The arrays are always complete, because this operation has no list limits.
 
-Each stage item has `id`, `name`, `position` and `archived`. `position` is the index of the stage among all stages from 0, archived stages included, so the first stage has position 0. Each field item has `id`, `record_type`, `name`, `type`, `currency`, `options` and `archived`. Items also carry their creation and update times, and a `change_id` while that change is still in history.
+Each stage item has `id`, `name`, `position` and `archived`. `position` is the index of the stage among all stages from 0, archived stages included, so the first stage has position 0. Each field item has `id`, `record_type`, `name`, `type`, `currency`, `options` and `archived`. Stages and fields also carry their creation and update times, and a `change_id` while that change is still in history. Each option has `id`, `name` and `archived`.
 
 ## Change one setting
 
 Pass the `read_id` from `workspace get` to `workspace configure`. Each call takes exactly one of `currency`, `name`, `stage` or `field`, along with `reason` and `read_id`.
 
-Any configuration change makes an earlier configuration read stale. Each example below is a separate write with its own `read_id`.
+Each example below is a separate write with its own `read_id`.
 
 Creating a stage or field returns its new ID in `ids`. An update returns `effect` and includes `change_id` only when a value changes. If no values change, it returns `{"effect":{"updated":0}}` and does not affect whether you can undo earlier changes.
 
@@ -100,11 +100,20 @@ To update a field, pass its `id` and one or more of `name`, `options` and `archi
 workspace configure {"field":{"id":"f9g3h7j1k5l8","options":[{"name":"LATAM"}]},"reason":"Assign Latin America its own sales region","read_id":"<read_id>"}
 ```
 
+Archive an option:
+
+```text
+workspace configure {"field":{"id":"f9g3h7j1k5l8","options":[{"id":"o4p8q2r6s0t3","archived":true}]},"reason":"Stop assigning companies to this region","read_id":"<read_id>"}
+```
+
 What to know about fields:
 
 - Field and option names hold 1 to 255 characters. Field names must be unique within a record type, archived names included. Comparison ignores case and extra whitespace.
 - `record_type`, `type` and `currency` can't change. If one is wrong, archive the field and create a new one with a different name.
 - Only a currency field accepts `currency`, and only a `select` or `multi_select` field accepts `options`.
-- An option without an `id` adds a choice, and an option with an `id` renames that choice. Options you leave out stay as they are. You can't delete or archive options, and their names must be unique within the field.
+- To add an option, send `name` without `id`. To change an option, send its `id` with `name`, `archived`, or both. Options you leave out stay as they are. Option names must be unique within the field, archived options included.
+- You can't delete options. To stop using one, set its `archived` to `true`, also while records hold it. To use it again, set `archived` to `false`. A field keeps at least one active option, so to stop using all of them, archive the field.
+- Reversing a field update gives back the earlier option names and `archived` values, and archives the options that the update added. While records hold an option that the reversal would archive, it fails with `linked` and the count of those records. Undo the later changes that set the option, or change the option on those records, then retry. If another option now holds a name that the reversal would give back, it fails with `reversal_conflict`. Rename that option, then retry.
+- Records keep the archived options that they hold, and record reads show their names. A record write can't add an archived option to a record. Filters accept archived options.
 - To stop using a field, set `archived` to `true`. Archived fields stay in `workspace get`, but record writes and filters reject them, and record reads leave out their values. The stored values are kept, so they come back if you set `archived` to `false`.
-- Reversing a field's creation archives the field. The field keeps its name, and records keep their stored values for it.
+- Reversing a field's creation archives the field, and the field keeps its name. While records hold values in the field, the reversal fails with `linked` and the count of those records. The same applies to reversing a change that made the field active. Undo the later changes that wrote the values or clear the values, then retry. To stop using the field and keep its values, archive it instead.

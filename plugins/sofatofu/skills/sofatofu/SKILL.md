@@ -10,7 +10,7 @@ description: >-
   workspace settings.
 license: MIT
 metadata:
-  version: 0.9.1
+  version: 0.10.0
 ---
 
 # Sofatofu
@@ -19,7 +19,7 @@ Sofatofu is an AI-first CRM designed for safe autonomous work. Your agent manage
 
 Start here:
 
-- If you have no sofatofu tools and no `sofatofu` command, ask the user to set up Sofatofu at [sofatofu.com](https://sofatofu.com) first.
+- If you have no Sofatofu tools and no `sofatofu` command, ask the user to set up Sofatofu at [sofatofu.com](https://sofatofu.com) first.
 - If no user is signed in, read [Setup and sign-in](references/setup.md) first.
 - If you work through the `sofatofu` CLI, read [Use the CLI](references/cli.md) before your first command.
 
@@ -40,7 +40,7 @@ If you're reading this as a person, ask your agent to do the work. You can inspe
 
 Each operation has a noun and a verb, and takes one JSON object of input keys. You reach the same operations in two ways:
 
-- **The connector.** In Claude, ChatGPT and other apps that support MCP connectors, sofatofu is a connector. Each operation is a tool named `<noun>_<verb>`, such as `record_search`. A tool takes the input object and returns the result as JSON text. A failed call returns an error result whose text is the `{ error, message }` body, as [When an operation fails](#when-an-operation-fails) describes.
+- **The connector.** In Claude, ChatGPT and other apps that support MCP connectors, Sofatofu is a connector. Each operation is a tool named `<noun>_<verb>`, such as `record_search`. A tool takes the input object and returns the result as JSON text. A failed call returns an error result whose text is the `{ error, message }` body, as [When an operation fails](#when-an-operation-fails) describes.
 - **The CLI.** Each operation is the command `sofatofu <noun> <verb>`, such as `sofatofu record search`. [Use the CLI](references/cli.md) explains how to pass the input keys.
 
 This skill names an operation by its noun and verb, such as `record search`. Each example shows one call on one line: the operation, then its input object:
@@ -63,7 +63,7 @@ To get the next page of a list or search, pass the `next.cursor` from the last p
 | `auth`       | `whoami`                                      | [The workspace of the connection](#the-workspace-of-the-connection)                     |
 | `feedback`   | `send`                                        | [Send feedback](#send-feedback)                                                         |
 
-To move records in from another CRM or a spreadsheet, or out to a file, read [Import and export](references/import-export.md). For a source with its own page, also read that page: [Spreadsheets and CSV files](references/import-spreadsheet.md), [HubSpot](references/import-hubspot.md), [Pipedrive](references/import-pipedrive.md), [Salesforce](references/import-salesforce.md). To bring in data from mail, calendars and other tools, read [Integrations](references/integrations.md).
+To move records in from another CRM or a spreadsheet, or out to a file, read [Import and export](references/import-export.md). Before creating a custom field for an import, follow the [field reuse rule](references/import-export.md#before-you-import). For a source with its own page, also read that page: [Spreadsheets and CSV files](references/import-spreadsheet.md), [HubSpot](references/import-hubspot.md), [Pipedrive](references/import-pipedrive.md), [Salesforce](references/import-salesforce.md). To bring in data from mail, calendars and other tools, read [Integrations](references/integrations.md).
 
 Read a reference file in full when you open it. They're short.
 
@@ -92,7 +92,7 @@ After a new sign-in, when the user asks what to do next, or when the workspace h
 
 ## Talking to the user
 
-When you talk with the user about sofatofu, use a calm, clear and warm tone. Use dry humour occasionally. Keep your reports short and concrete.
+When you talk with the user about Sofatofu, use a calm, clear and warm tone. Use dry humour occasionally. Keep your reports short and concrete.
 
 - **Lead with the answer or outcome.** For a query, summarise what the data shows. For an action, say what changed. Include relevant counts and totals, and anything the person needs to do next.
 - **Report failures and partial results as they are.** Say what happened and what's possible next. Don't soften an error or present partial completion as success.
@@ -189,7 +189,7 @@ record search {"type":"person","filter":{"or":[{"email":{"in":["ann@example.com"
 
 - A returned record with the domain, email, or source ID of an item holds that [strict key](references/records.md#fields-and-matching). When no returned record has the domain, email, or source ID of an item, the item has no strict match.
 - Searching by domain, email or source ID does not find records that match only by loose-match fields, such as a company's name. Creating a record can still return `possible_duplicate` for those matches.
-- Split the batch only when `total` exceeds 200. Each domain, email or source ID matches at most one record, but different keys from the same item can match different records. Name filters can also return several matches, so even a small batch can exceed 200 results.
+- Split the batch when `total` exceeds 200. Each domain, email or source ID matches at most one record, but different keys from the same item can match different records. Name filters can also return several matches, so even a small batch can exceed 200 results.
 
 ### More than 200 targets
 
@@ -226,6 +226,8 @@ Problems with the same field and message share an entry, unless they include det
 Reversal rule errors use record IDs in `items` instead of positions. Their `field` names the affected record field, or `record_ids` when the rule involves several fields.
 
 Fix every reported problem before you retry. Later checks may report more problems.
+
+A `read_stale` error means data changed after your read. If it has `errors`, they list records that changed or no longer match, by position. Repeat the same search or use `record get` with every ID in the write. The new read must include all records in the write. Check the listed records. If it has only `error` and `message`, repeat the whole read. Adjust the write as needed and send it with the new `read_id`. If `read_stale` repeats because other writers change the same records, send smaller batches and write right after each read.
 
 A `payment_required` error means the workspace's trial has ended and it has no paid plan. Every write except feedback is refused, and reads still work. Stop writing and ask the user to have a workspace owner subscribe at the billing page URL in the message.
 

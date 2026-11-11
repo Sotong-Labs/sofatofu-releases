@@ -1,7 +1,7 @@
 {
   "name": "sofatofu",
-  "version": "0.9.1",
-  "description": "Let your agent keep your CRM up to date. Ask it to find contacts, log calls, and update deals in sofatofu. See what changed and why, and undo most changes.",
+  "version": "0.10.0",
+  "description": "Let your agent keep your CRM up to date. Ask it to find contacts, log calls, and update deals in Sofatofu. See what changed and why, and undo most changes.",
   "author": {
     "name": "Sam Kah Man",
     "email": "help@sofatofu.com"
@@ -19,9 +19,9 @@
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
-    "displayName": "sofatofu",
+    "displayName": "Sofatofu",
     "shortDescription": "Let your agent do the CRM work",
-    "longDescription": "sofatofu is a CRM built for work you can delegate. Ask your agent to find a contact, log a call, update a deal, or review your pipeline.\n\nSee what changed and why, and undo most changes. Your agent works only in the workspace you choose, with the access your role allows.",
+    "longDescription": "Sofatofu is a CRM built for work you can delegate. Ask your agent to find a contact, log a call, update a deal, or review your pipeline.\n\nSee what changed and why, and undo most changes. Your agent works only in the workspace you choose, with the access your role allows.",
     "developerName": "Sam Kah Man",
     "category": "Business & Operations",
     "capabilities": [
@@ -45,7 +45,7 @@
           "positive": [
             {
               "description": "Find a company and its open deals",
-              "prompt": "Find the company Acme in sofatofu and list its open deals.",
+              "prompt": "Find the company Acme in Sofatofu and list its open deals.",
               "tools_triggered": "record_search",
               "expected_behavior": "Searches companies for Acme, then searches the deals of that company that are not won or lost. Lists each deal with its stage and value, and says when more deals remain."
             },
@@ -63,7 +63,7 @@
             },
             {
               "description": "Explain and undo the last change",
-              "prompt": "What did you change in sofatofu today? Undo the last change.",
+              "prompt": "What did you change in Sofatofu today? Undo the last change.",
               "tools_triggered": "auth_whoami, change_list, change_get, record_get, change_reverse",
               "expected_behavior": "Lists the changes of the signed-in user since the start of the day and explains them. Checks that the last change can be reversed, reads the records it changed, and reverses it with a reason. Reports the new change."
             },
@@ -81,7 +81,7 @@
             },
             {
               "description": "Access outside the connected workspace",
-              "prompt": "Show me the deals in the sofatofu workspace of another company that I am not a member of."
+              "prompt": "Show me the deals in the Sofatofu workspace of another company that I am not a member of."
             },
             {
               "description": "A request that is not CRM work",
@@ -91,7 +91,7 @@
         }
       },
       "publication": {
-        "release_notes": "### 🔧 Everyday improvements\n\n- Marketplace MCP settings omit the OpenAI-only authentication extension that Anthropic's directory policy rejects. `sofatofu-plugin.zip` keeps the OpenAI OAuth settings."
+        "release_notes": "### 🗂️ Archive select options\n\nWorkspace owners can archive select or multi-select options that records still use, and unarchive them later. Records keep those values, and filters still accept archived options.\n\n### 🔧 Everyday improvements\n\n- Most writes check only the records they change, so new records on a search page do not cause `read_stale`. Create requests and stage moves by position still require the full read to stay unchanged. For record updates and deletes, `read_stale` identifies the changed records.\n- Sofatofu removes soft hyphens from text, emails, and domains instead of rejecting them.\n- The portal shows the trial end date and time in your browser's time zone.\n\n### ⚠️ Before you upgrade\n\n- Run `sofatofu update` to update the CLI and its installed skill copies. If you use the skill without the CLI, update that skill.\n- If a write returns `read_expired` after the server update, repeat the read and check the new result before you retry with the new `read_id`.\n- Undoing a field update archives the options it added rather than removing them. Undo fails with `linked` if it would archive a field or option that records still use, or `reversal_conflict` if it would restore an option name that another option uses. Follow the error's guidance before retrying.\n\n### 🔧 CLI setup changes\n\n`sofatofu update` only refreshes installed skill copies. If a new folder below has no `sofatofu` copy, run `sofatofu init --agent <name>`.\n\n- Antigravity and Antigravity CLI use `~/.gemini/config/skills` for global skills. Run `sofatofu init --agent antigravity` or `sofatofu init --agent antigravity-cli` to install there. Project copies stay in `<project>/.agents/skills`.\n- fx uses `~/.agents/skills` and `<project>/.agents/skills`. Delete obsolete copies in `~/.fx/skills/sofatofu` and `<project>/.fx/skills/sofatofu`. fx may still load them, but the CLI no longer updates or warns about them, and `sofatofu uninstall` does not remove them.\n- Reasonix uses `$REASONIX_HOME/skills` if `REASONIX_HOME` is set. Otherwise, it uses `%APPDATA%\\reasonix\\skills` on Windows and `~/.reasonix/skills` elsewhere. If the new folder differs from `~/.reasonix/skills`, install there before deleting `~/.reasonix/skills/sofatofu`.\n\nDelete only obsolete `sofatofu` subfolders, never their parent `skills` folders."
       }
     }
   }

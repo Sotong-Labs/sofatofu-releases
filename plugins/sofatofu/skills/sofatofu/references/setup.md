@@ -6,7 +6,7 @@ If neither Sofatofu tools nor the `sofatofu` command are available, ask the user
 
 ## Check the connection
 
-- If you have the sofatofu tools, call `auth_whoami`.
+- If you have the Sofatofu tools, call `auth_whoami`.
 - If you have the `sofatofu` command, run `sofatofu auth whoami`.
 
 A network or service error does not mean the user is signed out, so do not connect again or install anything because of it.

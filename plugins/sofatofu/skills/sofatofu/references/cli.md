@@ -1,6 +1,6 @@
 # Use the CLI
 
-This page explains how to call sofatofu operations through the `sofatofu` CLI. To sign in, update or uninstall, see [Setup and sign-in](setup.md).
+This page explains how to call Sofatofu operations through the `sofatofu` CLI. To sign in, update or uninstall, see [Setup and sign-in](setup.md).
 
 ## Command form
 

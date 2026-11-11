@@ -1,7 +1,7 @@
 {
   "name": "sofatofu",
   "owner": { "name": "Sam Kah Man", "email": "help@sofatofu.com" },
-  "description": "Find contacts, log calls, and update deals in sofatofu from Claude Code or Codex.",
+  "description": "Find contacts, log calls, and update deals in Sofatofu from Claude Code or Codex.",
   "plugins": [
     {
       "name": "sofatofu",

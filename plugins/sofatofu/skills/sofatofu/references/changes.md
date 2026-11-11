@@ -51,7 +51,7 @@ An unknown or removed change returns `not_found`.
 
 ## Reverse a change
 
-Reversing restores the `before` values as a new change, with your reason. The original history stays intact. Reversing a creation deletes the records it created, and reversing a deletion restores the deleted records. Reversing the creation of a stage or field archives it.
+Reversing restores the `before` values as a new change, with your reason. The original history stays intact. Reversing a creation deletes the records it created, and reversing a deletion restores the deleted records. Reversing the creation of a stage or field archives it, and reversing a field update archives the options that it added. While deals use the stage, records hold values in the field, or records hold the option, the reversal fails with `linked`.
 
 Inspect the change first and check `reversibility`:
 
@@ -59,9 +59,9 @@ Inspect the change first and check `reversibility`:
 - `some`: you can undo only some records. Run `change get` and pass the items with `reversible: true` in `record_ids`.
 - `none`: you can't undo any record. The kind of change can't be undone, or later changes touched every record. Member access changes and workspace creation can't be undone.
 
-`all` and `reversible: true` mean that no later change has touched the records. The undo is still a write, so it can fail like any write. For example, undoing a domain change fails as `duplicate` if another company has taken the old domain since. Undoing a creation fails as `linked` while other records link to the new record. Undoing a stage move fails as `reversal_conflict` when another stage now holds the old place. The error tells you what to fix. An undo or a restore checks no [loose match](records.md#fields-and-matching), so it can give back a name that another record now holds.
+`all` and `reversible: true` mean that no later change has touched the records. The undo is still a write, so it can fail like any write. For example, undoing a domain change fails as `duplicate` if another company has taken the old domain since. Undoing a creation fails as `linked` while other records link to the new record. Undoing a stage move fails as `reversal_conflict` when another stage now holds the old place. Undoing a record update fails as `invalid_input` with `must name an active option` when it would give the record back an archived option. The error tells you what to fix. An undo or a restore checks no [loose match](records.md#fields-and-matching), so it can give back a name that another record now holds.
 
-You can undo only the latest change to a record. For example, change 1 renames Acme, and change 2 sets its phone. You can't undo change 1.
+You can undo only the latest change to a record. For example, change 1 renames Acme, and change 2 sets its phone. You can't undo change 1, and undoing change 2 doesn't change that, because the undo is a new change to Acme.
 
 No two changes with `reversibility: "all"` share a record, so undoing one never blocks another.
 

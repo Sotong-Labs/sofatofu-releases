@@ -121,7 +121,7 @@ Put custom filters under `fields`, keyed by the active field name. Every custom 
 
 A `long_text` filter compares the full value in lower case, after it trims the start and end and changes each run of whitespace to one space. It does not accept `contains`.
 
-A `multi_select` filter compares each option on its own. `equals` and `in` find records that hold at least one of the given options, also when they hold other options. `not_in` finds records that hold none of them.
+A `select` or `multi_select` filter accepts the names of archived options too. A `multi_select` filter compares each option on its own. `equals` and `in` find records that hold at least one of the given options, also when they hold other options. `not_in` finds records that hold none of them.
 
 For example, find companies in either region with at least 50 employees:
 
@@ -132,7 +132,3 @@ record search {"type":"company","filter":{"fields":{"Region":{"in":["EMEA","APAC
 ## When a filter is rejected
 
 An unknown field, an unsupported operator or a wrong value returns `invalid_input`. The error message lists the accepted field names, operators or value format, so use it to correct the filter.
-
-## Edge cases
-
-`last_activity` depends on the current time, so its matches change as time passes, and that can make a read stale. If a write fails with `read_stale` after a `last_activity` search, repeat the search before you write again.
